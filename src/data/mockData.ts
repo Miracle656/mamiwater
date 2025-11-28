@@ -71,6 +71,7 @@ export const mockDApps: DApp[] = [
             'Yield farming',
         ],
         developer: developers[0],
+        reviewsTableId: '', // Mock data - not used in production
         reviews: [
             {
                 id: 'r1',
@@ -116,6 +117,7 @@ export const mockDApps: DApp[] = [
         screenshots: [],
         features: ['NFT trading', 'Collections', 'Auctions', 'Creator tools'],
         developer: developers[1],
+        reviewsTableId: '', // Mock data - not used in production
         reviews: [],
     },
     {
@@ -149,6 +151,7 @@ export const mockDApps: DApp[] = [
         screenshots: [],
         features: ['Concentrated liquidity', 'Yield optimization', 'Multi-pool support'],
         developer: developers[2],
+        reviewsTableId: '', // Mock data - not used in production
         reviews: [],
     },
     {
@@ -180,6 +183,7 @@ export const mockDApps: DApp[] = [
         screenshots: [],
         features: ['IDO platform', 'Token vesting', 'Staking pools'],
         developer: developers[0],
+        reviewsTableId: '', // Mock data - not used in production
         reviews: [],
     },
     {
@@ -211,6 +215,7 @@ export const mockDApps: DApp[] = [
         screenshots: [],
         features: ['Domain registration', 'Subdomain support', 'Profile management'],
         developer: developers[0],
+        reviewsTableId: '', // Mock data - not used in production
         reviews: [],
     },
     {
@@ -243,6 +248,7 @@ export const mockDApps: DApp[] = [
         screenshots: [],
         features: ['DEX aggregator', 'Yield farming', 'Portfolio tracker'],
         developer: developers[0],
+        reviewsTableId: '', // Mock data - not used in production
         reviews: [],
     },
     {
@@ -275,6 +281,7 @@ export const mockDApps: DApp[] = [
         screenshots: [],
         features: ['Lending pools', 'Collateralized borrowing', 'Flexible interest rates'],
         developer: developers[0],
+        reviewsTableId: '', // Mock data - not used in production
         reviews: [],
     },
     {
@@ -306,6 +313,7 @@ export const mockDApps: DApp[] = [
         screenshots: [],
         features: ['Monster collection', 'PvP battles', 'Breeding system', 'Tournaments'],
         developer: developers[0],
+        reviewsTableId: '', // Mock data - not used in production
         reviews: [],
     },
     {
@@ -337,6 +345,7 @@ export const mockDApps: DApp[] = [
         screenshots: [],
         features: ['Multi-chain support', 'NFT gallery', 'Built-in swap', 'Hardware wallet support'],
         developer: developers[0],
+        reviewsTableId: '', // Mock data - not used in production
         reviews: [],
     },
     {
@@ -368,6 +377,7 @@ export const mockDApps: DApp[] = [
         screenshots: [],
         features: ['Decentralized posts', 'NFT profiles', 'Token-gated communities', 'On-chain messaging'],
         developer: developers[0],
+        reviewsTableId: '', // Mock data - not used in production
         reviews: [],
     },
 ];
