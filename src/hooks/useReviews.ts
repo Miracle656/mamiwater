@@ -2,6 +2,7 @@ import { useSuiClient } from "@mysten/dapp-kit";
 import { useQuery } from "@tanstack/react-query";
 import { PACKAGE_ID, MODULE_NAME } from "../constants";
 import type { Review } from "../types";
+import { fetchFromWalrus } from "../walrus";
 
 export const useReviews = (dappId: string, reviewsTableId: string) => {
     const client = useSuiClient();
@@ -58,6 +59,17 @@ export const useReviews = (dappId: string, reviewsTableId: string) => {
                         timestamp = Number(fields.date);
                     }
 
+                    // Fetch content from Walrus if blob ID exists
+                    let content = "";
+                    if (fields.content_blob_id) {
+                        try {
+                            const fetchedContent = await fetchFromWalrus(fields.content_blob_id);
+                            content = fetchedContent || "";
+                        } catch (err) {
+                            console.error(`Failed to fetch review content for blob ${fields.content_blob_id}:`, err);
+                        }
+                    }
+
                     // Map to Review interface
                     return {
                         id: reviewObj.data.objectId,
@@ -66,7 +78,7 @@ export const useReviews = (dappId: string, reviewsTableId: string) => {
                         userAvatar: "👤",
                         rating: Number(fields.rating),
                         title: fields.title,
-                        content: "",
+                        content: content,
                         contentBlobId: fields.content_blob_id,
                         date: new Date(timestamp).toISOString(),
                         helpful: Number(fields.helpful_count),

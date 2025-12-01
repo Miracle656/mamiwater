@@ -35,7 +35,8 @@ export const useComments = (dappId: string) => {
                     let content = "";
                     try {
                         if (data.content_blob_id) {
-                            content = await fetchFromWalrus(data.content_blob_id);
+                            const fetchedContent = await fetchFromWalrus(data.content_blob_id);
+                            content = fetchedContent || "[Content unavailable]";
                         }
                     } catch (err) {
                         console.error(`Failed to fetch comment content for ${data.comment_id}:`, err);

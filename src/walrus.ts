@@ -1,4 +1,4 @@
-import { WALRUS_PUBLISHER, WALRUS_AGGREGATOR } from './constants';
+import { WALRUS_PUBLISHERS, WALRUS_AGGREGATORS } from './constants';
 
 export async function uploadToWalrus(content: string | File | Blob): Promise<string> {
     let body: string | File | Blob = content;
@@ -9,41 +9,80 @@ export async function uploadToWalrus(content: string | File | Blob): Promise<str
         body = JSON.stringify(content);
     }
 
-    const response = await fetch(WALRUS_PUBLISHER, {
-        method: "PUT",
-        body: body,
-    });
+    const errors: Array<{ publisher: string; error: any }> = [];
 
-    if (!response.ok) {
-        const text = await response.text();
-        throw new Error(`Upload failed: ${text}`);
+    // Try each publisher endpoint
+    for (const publisherBase of WALRUS_PUBLISHERS) {
+        try {
+            const publisherUrl = `${publisherBase}?epochs=30`;
+            console.log(`Attempting upload to: ${publisherUrl}`);
+
+            const response = await fetch(publisherUrl, {
+                method: "PUT",
+                body: body,
+            });
+
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(`Upload failed: ${text}`);
+            }
+
+            const data = await response.json();
+
+            // Walrus returns: { newlyCreated: { blobObject: { blobId: "..." } } }
+            // OR { alreadyCertified: { blobId: "..." } } depending on if data exists
+            const blobId =
+                data.newlyCreated?.blobObject?.blobId ||
+                data.alreadyCertified?.blobId ||
+                data.blobObject?.blobId;
+
+            if (!blobId) {
+                console.error("Walrus response:", data);
+                throw new Error("Could not retrieve Blob ID from Walrus");
+            }
+
+            console.log(`✓ Upload successful to ${publisherUrl}`);
+            return blobId;
+        } catch (error) {
+            console.warn(`✗ Failed to upload to ${publisherBase}:`, error);
+            errors.push({ publisher: publisherBase, error });
+            // Continue to next publisher
+        }
     }
 
-    const data = await response.json();
-
-    // Walrus returns: { newlyCreated: { blobObject: { blobId: "..." } } }
-    // OR { alreadyCertified: { blobId: "..." } } depending on if data exists
-    const blobId =
-        data.newlyCreated?.blobObject?.blobId ||
-        data.alreadyCertified?.blobId ||
-        data.blobObject?.blobId;
-
-    if (!blobId) {
-        console.error("Walrus response:", data);
-        throw new Error("Could not retrieve Blob ID from Walrus");
-    }
-
-    return blobId;
+    // If all publishers failed, throw an error with details
+    console.error("All Walrus publishers failed:", errors);
+    throw new Error(`Upload failed on all ${WALRUS_PUBLISHERS.length} publishers. Last error: ${errors[errors.length - 1]?.error}`);
 }
 
-export function getWalrusUrl(blobId: string): string {
-    return `${WALRUS_AGGREGATOR}/${blobId}`;
+export function getWalrusUrl(blobId: string, aggregatorIndex: number = 0): string {
+    return `${WALRUS_AGGREGATORS[aggregatorIndex]}/${blobId}`;
 }
 
-export async function fetchFromWalrus(blobId: string): Promise<string> {
-    const response = await fetch(getWalrusUrl(blobId));
-    if (!response.ok) {
-        throw new Error(`Failed to fetch blob ${blobId}`);
+export async function fetchFromWalrus(blobId: string): Promise<string | null> {
+    const errors: Array<{ aggregator: string; error: any }> = [];
+
+    // Try each aggregator endpoint
+    for (let i = 0; i < WALRUS_AGGREGATORS.length; i++) {
+        const aggregatorUrl = getWalrusUrl(blobId, i);
+        try {
+            console.log(`Attempting fetch from: ${aggregatorUrl}`);
+            const response = await fetch(aggregatorUrl);
+
+            if (!response.ok) {
+                throw new Error(`${response.status} ${response.statusText}`);
+            }
+
+            console.log(`✓ Fetch successful from ${WALRUS_AGGREGATORS[i]}`);
+            return await response.text();
+        } catch (error) {
+            console.warn(`✗ Failed to fetch from ${WALRUS_AGGREGATORS[i]}:`, error);
+            errors.push({ aggregator: WALRUS_AGGREGATORS[i], error });
+            // Continue to next aggregator
+        }
     }
-    return await response.text();
+
+    // If all aggregators failed, log and return null
+    console.warn(`All Walrus aggregators failed for blob ${blobId}:`, errors);
+    return null;
 }

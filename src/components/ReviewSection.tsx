@@ -7,6 +7,7 @@ import { Star } from 'lucide-react';
 
 interface ReviewSectionProps {
     dappId: string;
+    dappName?: string;
     packageId?: string | null;
     reviews: Review[];
     rating: number;
@@ -14,7 +15,7 @@ interface ReviewSectionProps {
     onReviewSubmitted?: (review: { rating: number; title: string; content: string; verified: boolean }) => void;
 }
 
-export default function ReviewSection({ dappId, packageId, reviews, rating, reviewCount, onReviewSubmitted }: ReviewSectionProps) {
+export default function ReviewSection({ dappId, dappName, packageId, reviews, rating, reviewCount, onReviewSubmitted }: ReviewSectionProps) {
     const [sortBy] = useState<'recent' | 'helpful'>('recent');
 
     // Calculate rating distribution
@@ -70,7 +71,7 @@ export default function ReviewSection({ dappId, packageId, reviews, rating, revi
 
                 {/* Review Form & List */}
                 <div className="w-full space-y-6">
-                    <ReviewForm dappId={dappId} packageId={packageId} onReviewSubmitted={onReviewSubmitted} />
+                    <ReviewForm dappId={dappId} dappName={dappName} packageId={packageId} onReviewSubmitted={onReviewSubmitted} />
 
                     <div className="space-y-6">
                         {sortedReviews.map((review) => (

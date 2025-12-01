@@ -24,6 +24,7 @@ import { useCurrentAccount } from '@mysten/dapp-kit';
 import { useReviews } from '../hooks/useReviews';
 import { useComments } from '../hooks/useComments';
 import { useSubmitComment } from '../hooks/useSubmitComment';
+import { useOnChainDApp } from '../hooks/useOnChainDApp';
 
 export default function DAppDetailPage() {
     const { id } = useParams<{ id: string }>();
@@ -32,9 +33,12 @@ export default function DAppDetailPage() {
     // Find the dApp from the fetched list
     const dapp = dapps?.find(d => d.id === id);
 
-    // Fetch reviews and comments from blockchain
-    const { data: fetchedReviews } = useReviews(dapp?.id || '', dapp?.reviewsTableId || '');
-    const { data: fetchedComments } = useComments(dapp?.id || '');
+    // Fetch on-chain dApp details (Object ID, reviews table ID)
+    const { data: onChainDApp } = useOnChainDApp(dapp?.packageId || '', dapp?.name);
+
+    // Fetch reviews and comments from blockchain using the correct on-chain IDs
+    const { data: fetchedReviews } = useReviews(onChainDApp?.id || '', onChainDApp?.reviewsTableId || '');
+    const { data: fetchedComments } = useComments(onChainDApp?.id || '');
 
     // Local state for optimistic updates (newly added items)
     const [localReviews, setLocalReviews] = useState<Review[]>([]);
@@ -85,6 +89,7 @@ export default function DAppDetailPage() {
             submitComment(
                 dapp.id,
                 content,
+                dapp.name, // Pass dApp name for lookup
                 parentId,
                 () => {
                     console.log("Comment submitted successfully!");
@@ -366,6 +371,7 @@ export default function DAppDetailPage() {
                 <div className="neo-box p-8 bg-white">
                     <ReviewSection
                         dappId={dapp.id}
+                        dappName={dapp.name}
                         packageId={dapp.packageId}
                         reviews={reviews}
                         rating={dapp.rating}

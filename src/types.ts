@@ -56,7 +56,19 @@ export type Category =
     | 'DAO'
     | 'Wallet'
     | 'Analytics'
-    | 'Other';
+    | 'Other'
+    | 'Bridge'
+    | 'DEX'
+    | 'Lending'
+    | 'Yield'
+    | 'CDP'
+    | 'Launchpad'
+    | 'Liquid Staking'
+    | 'RWA'
+    | 'Algo Stables'
+    | 'Synthetics'
+    | 'Payments'
+    | 'Derivatives';
 
 export interface Developer {
     id: string;

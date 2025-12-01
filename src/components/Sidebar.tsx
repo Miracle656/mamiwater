@@ -15,7 +15,18 @@ import {
     Layers,
     ChevronLeft,
     ChevronRight,
-    X
+    X,
+    ArrowLeftRight,
+    Banknote,
+    Sprout,
+    Landmark,
+    Rocket,
+    Droplets,
+    Building2,
+    Scale,
+    TestTube,
+    CreditCard,
+    TrendingUp
 } from 'lucide-react';
 
 const categoryIcons: Record<Category, React.ReactNode> = {
@@ -29,6 +40,18 @@ const categoryIcons: Record<Category, React.ReactNode> = {
     Wallet: <Wallet className="w-5 h-5" />,
     Analytics: <BarChart3 className="w-5 h-5" />,
     Other: <Layers className="w-5 h-5" />,
+    Bridge: <ArrowLeftRight className="w-5 h-5" />,
+    DEX: <ArrowLeftRight className="w-5 h-5" />,
+    Lending: <Banknote className="w-5 h-5" />,
+    Yield: <Sprout className="w-5 h-5" />,
+    CDP: <Landmark className="w-5 h-5" />,
+    Launchpad: <Rocket className="w-5 h-5" />,
+    'Liquid Staking': <Droplets className="w-5 h-5" />,
+    RWA: <Building2 className="w-5 h-5" />,
+    'Algo Stables': <Scale className="w-5 h-5" />,
+    Synthetics: <TestTube className="w-5 h-5" />,
+    Payments: <CreditCard className="w-5 h-5" />,
+    Derivatives: <TrendingUp className="w-5 h-5" />,
 };
 
 interface SidebarProps {

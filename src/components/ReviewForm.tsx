@@ -5,11 +5,12 @@ import { useCurrentAccount, useSuiClient } from '@mysten/dapp-kit';
 
 interface ReviewFormProps {
     dappId: string;
+    dappName?: string;
     packageId?: string | null;
     onReviewSubmitted?: (review: { rating: number; title: string; content: string; verified: boolean }) => void;
 }
 
-export default function ReviewForm({ dappId, packageId, onReviewSubmitted }: ReviewFormProps) {
+export default function ReviewForm({ dappId, dappName, packageId, onReviewSubmitted }: ReviewFormProps) {
     const [rating, setRating] = useState(0);
     const [hoverRating, setHoverRating] = useState(0);
     const [title, setTitle] = useState('');
@@ -78,6 +79,7 @@ export default function ReviewForm({ dappId, packageId, onReviewSubmitted }: Rev
             title,
             content,
             userName,
+            dappName,
             () => {
                 // On Success
                 if (onReviewSubmitted) {

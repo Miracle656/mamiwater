@@ -5,6 +5,7 @@ import { useRegisterDApp } from '../hooks/useRegisterDApp';
 import { useDeveloper } from '../hooks/useDeveloper';
 import { useCurrentAccount } from '@mysten/dapp-kit';
 import { useToast } from '../components/Toast';
+import AutoRegisterButton from '../components/AutoRegisterButton';
 
 export default function SubmitPage() {
     // Developer Status
@@ -251,6 +252,11 @@ export default function SubmitPage() {
                         <p className="text-xl font-medium text-gray-600 border-l-4 border-neo-cyan pl-4">Get discovered by the Sui community</p>
                     </div>
                 </div>
+            </div>
+
+            {/* Auto-Register Section */}
+            <div className="mb-8">
+                <AutoRegisterButton />
             </div>
 
             <div className="neo-box p-8 bg-white">

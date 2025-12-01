@@ -1,43 +1,55 @@
-import { useSignAndExecuteTransaction } from "@mysten/dapp-kit";
+import { useSignAndExecuteTransaction, useSuiClient } from "@mysten/dapp-kit";
 import { Transaction } from "@mysten/sui/transactions";
 import { useState } from "react";
 import { PACKAGE_ID, REGISTRY_ID, MODULE_NAME } from "../constants";
 import { uploadToWalrus } from "../walrus";
+import { getDAppObjectId } from "../utils/getDAppObjectId";
 
 export const useSubmitReview = () => {
-    // const client = useSuiClient();
+    const client = useSuiClient();
     const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
     const [isUploading, setIsUploading] = useState(false);
 
     const submitReview = async (
-        dappId: string,
+        dappId: string, // This is the package address from Blockberry
         rating: number, // 1 to 5
         title: string,
         commentText: string,
         userName: string,
+        dappName?: string, // Optional dApp name for lookup
         onSuccess?: () => void,
         onError?: (error: any) => void
     ) => {
         try {
             setIsUploading(true);
 
-            // --- STEP 1: Upload Content to Walrus ---
+            // --- STEP 1: Get the DApp Object ID using the dApp name ---
+            console.log("Fetching DApp object ID for:", dappName || dappId);
+            const dappObjectId = await getDAppObjectId(client, dappId, dappName);
+
+            if (!dappObjectId) {
+                throw new Error(`DApp not found in registry for package: ${dappId}. Please register this dApp first.`);
+            }
+
+            console.log("DApp Object ID:", dappObjectId);
+
+            // --- STEP 2: Upload Content to Walrus ---
             console.log("Uploading to Walrus...");
             const blobId = await uploadToWalrus(commentText);
             console.log("Walrus Blob ID:", blobId);
 
-            // --- STEP 2: Submit to Sui ---
+            // --- STEP 3: Submit to Sui ---
             const tx = new Transaction();
 
             tx.moveCall({
                 target: `${PACKAGE_ID}::${MODULE_NAME}::add_review`,
                 arguments: [
                     tx.object(REGISTRY_ID),      // Registry Object
-                    tx.pure.id(dappId),          // The DApp being reviewed
+                    tx.object(dappObjectId),     // The DApp OBJECT ID (not package address!)
                     tx.pure.string(userName),    // User's display name
                     tx.pure.u8(rating),          // Rating (1-5)
                     tx.pure.string(title),       // Review Title
-                    tx.pure.string(blobId),      // <--- The Walrus Blob ID!
+                    tx.pure.string(blobId),      // The Walrus Blob ID
                     tx.object('0x6'),            // Clock Object
                 ],
             });
@@ -53,7 +65,13 @@ export const useSubmitReview = () => {
                     onError: (err) => {
                         console.error("Sui Transaction failed", err);
                         setIsUploading(false);
-                        if (onError) onError(err);
+
+                        // Handle specific error codes
+                        if (err.message && err.message.includes("MoveAbort") && err.message.includes("function: 5")) {
+                            if (onError) onError(new Error("You have already reviewed this dApp."));
+                        } else {
+                            if (onError) onError(err);
+                        }
                     },
                 }
             );

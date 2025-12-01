@@ -20,7 +20,11 @@ export default function ReviewItem({ review }: ReviewItemProps) {
                 try {
                     setIsLoading(true);
                     const text = await fetchFromWalrus(review.contentBlobId!);
-                    setContent(text);
+                    if (text) {
+                        setContent(text);
+                    } else {
+                        setError("Content unavailable");
+                    }
                 } catch (err) {
                     console.error("Failed to fetch review content:", err);
                     setError("Failed to load review content.");

@@ -5,6 +5,25 @@ export const PACKAGE_ID = '0xdf2c43333ce33e410cad9464ab98522fb699612b040f26e9696
 export const REGISTRY_ID = '0x08e331a236a3191ff3d26c2ec8288296a40f1d6b5c91ec7b6269619fb27c5050';
 export const MODULE_NAME = 'dapp_registry';
 
-// Walrus Configuration
-export const WALRUS_PUBLISHER = 'https://publisher.walrus-testnet.walrus.space/v1/blobs?epochs=1';
-export const WALRUS_AGGREGATOR = 'https://aggregator.walrus-testnet.walrus.space/v1/blobs';
+// Walrus Configuration - Multiple endpoints for fallback
+export const WALRUS_PUBLISHERS = [
+    'https://walrus-testnet-publisher.nodes.guru/v1/blobs',
+    'https://walrus-testnet-publisher.stakely.io/v1/blobs',
+    'https://publisher.walrus-testnet.walrus.space/v1/blobs',
+    'https://walrus-testnet-publisher.everstake.one/v1/blobs',
+    'https://walrus-testnet-publisher.chainbase.online/v1/blobs',
+    'https://publisher.testnet.walrus.atalma.io/v1/blobs',
+    'https://walrus-testnet-publisher.natsai.xyz/v1/blobs',
+    'https://walrus-testnet-publisher.nodeinfra.com/v1/blobs',
+];
+
+export const WALRUS_AGGREGATORS = [
+    'https://walrus-testnet-aggregator.nodes.guru/v1/blobs',
+    'https://walrus-testnet-aggregator.stakely.io/v1/blobs',
+    'https://aggregator.walrus-testnet.walrus.space/v1/blobs',
+    'https://walrus-testnet-aggregator.everstake.one/v1/blobs',
+    'https://walrus-testnet-aggregator.chainbase.online/v1/blobs',
+    'https://aggregator.testnet.walrus.atalma.io/v1/blobs',
+    'https://walrus-testnet-aggregator.natsai.xyz/v1/blobs',
+    'https://walrus-testnet-aggregator.nodeinfra.com/v1/blobs',
+];

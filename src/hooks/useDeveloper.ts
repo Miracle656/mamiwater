@@ -76,7 +76,9 @@ export const useDeveloper = () => {
                             // Fetch bio content from Walrus
                             if (devFields.bio_blob_id) {
                                 fetchFromWalrus(devFields.bio_blob_id).then(bioText => {
-                                    setProfile(prev => prev ? { ...prev, bio: bioText } : null);
+                                    if (bioText) {
+                                        setProfile(prev => prev ? { ...prev, bio: bioText } : null);
+                                    }
                                 }).catch(err => {
                                     console.error("Failed to fetch bio:", err);
                                 });
