@@ -7,9 +7,10 @@ import DAppCard from '../components/DAppCard';
 import TrendingDashboard from '../components/TrendingDashboard';
 import HeroSection from '../components/HeroSection';
 import DisplayName from '../components/DisplayName';
-import { TrendingUp, Loader2 } from 'lucide-react';
+import { TrendingUp, Loader2, Copy, Check } from 'lucide-react';
 import { useCurrentAccount } from '@mysten/dapp-kit';
 import { useDApps } from '../hooks/useDApps';
+import { useState } from 'react';
 
 interface OutletContextType {
     selectedCategory: Category | 'all';
@@ -19,6 +20,7 @@ export default function HomePage() {
     const { selectedCategory } = useOutletContext<OutletContextType>();
     const account = useCurrentAccount();
     const { data: dapps, isLoading, error } = useDApps();
+    const [copied, setCopied] = useState(false);
 
     const displayDApps = dapps || [];
 
@@ -29,6 +31,14 @@ export default function HomePage() {
     const trendingDApps = filteredDApps
         .sort((a, b) => b.metrics.users24h - a.metrics.users24h)
         .slice(0, 9);
+
+    const copyAddress = () => {
+        if (account?.address) {
+            navigator.clipboard.writeText(account.address);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        }
+    };
 
     return (
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -42,9 +52,22 @@ export default function HomePage() {
             {/* Welcome Section - Show when connected */}
             {account && (
                 <div className="mb-12 py-6">
-                    <h1 className="text-3xl md:text-4xl font-bold text-neo-black mb-1">
-                        Welcome, <DisplayName name={account.address} className="inline" />
-                    </h1>
+                    <div className="flex items-center gap-3 mb-1">
+                        <h1 className="text-3xl md:text-4xl font-bold text-neo-black">
+                            Welcome, <DisplayName name={account.address} className="inline" />
+                        </h1>
+                        <button
+                            onClick={copyAddress}
+                            className="p-2 border-2 border-neo-black bg-white hover:bg-neo-yellow transition-colors shadow-neo-sm hover:shadow-neo active:shadow-none"
+                            title="Copy address"
+                        >
+                            {copied ? (
+                                <Check className="w-5 h-5 text-green-600" />
+                            ) : (
+                                <Copy className="w-5 h-5" />
+                            )}
+                        </button>
+                    </div>
                     <p className="text-lg font-medium text-gray-600">
                         Resume your journey
                     </p>

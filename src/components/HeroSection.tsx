@@ -98,7 +98,10 @@ export default function HeroSection() {
 
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
                     <div className="neo-button-wrapper">
-                        <ConnectButton className="!bg-neo-yellow !text-neo-black !font-black !border-3 !border-neo-black !shadow-neo !px-10 !py-4 !text-xl !uppercase hover:!translate-x-[-2px] hover:!translate-y-[-2px] hover:!shadow-neo-lg !transition-all !rounded-none" />
+                        <ConnectButton
+                            connectText="GET STARTED"
+                            className="!bg-neo-yellow !text-neo-black !font-black !border-3 !border-neo-black !shadow-neo !px-10 !py-4 !text-xl !uppercase hover:!translate-x-[-2px] hover:!translate-y-[-2px] hover:!shadow-neo-lg !transition-all !rounded-none"
+                        />
                     </div>
                     <button
                         onClick={scrollToTrending}
