@@ -44,7 +44,7 @@ export default async function handler(
     }
 
     try {
-        const { transactionBytes, userAddress, userSignature } = req.body;
+        const { transactionBytes, userAddress } = req.body;
 
         if (!transactionBytes || !userAddress) {
             return res.status(400).json({ error: 'Missing required fields' });
@@ -79,28 +79,24 @@ export default async function handler(
         const txBytesArray = Uint8Array.from(atob(transactionBytes), c => c.charCodeAt(0));
         const transaction = Transaction.from(txBytesArray);
 
-        // IMPORTANT: Set sender and gas owner BEFORE building
+        // Set sender and gas owner
+        // For zkLogin: sponsor signs on behalf of user
         transaction.setSender(userAddress);
         transaction.setGasOwner(sponsorAddress);
         transaction.setGasBudget(10000000); // 0.01 SUI max
 
-        // Build the transaction
-        const builtTx = await transaction.build({ client });
+        // Build and sign with sponsor key
+        const { bytes, signature } = await transaction.sign({
+            client,
+            signer: sponsorKeypair,
+        });
 
-        // Sign transaction with sponsor key
-        const sponsorSignedTx = await sponsorKeypair.signTransaction(builtTx);
-
-        // Combine signatures: [user signature, sponsor signature]
-        const signatures = userSignature
-            ? [userSignature, sponsorSignedTx.signature]
-            : [sponsorSignedTx.signature];
-
-        console.log(`Executing with ${signatures.length} signature(s)`);
+        console.log(`Executing sponsored transaction...`);
 
         // Execute sponsored transaction
         const result = await client.executeTransactionBlock({
-            transactionBlock: builtTx,
-            signature: signatures,
+            transactionBlock: bytes,
+            signature,
             options: {
                 showEffects: true,
                 showObjectChanges: true,

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Transaction } from "@mysten/sui/transactions";
-import { useSuiClient, useCurrentAccount, useSignTransaction } from "@mysten/dapp-kit";
+import { useSuiClient, useCurrentAccount } from "@mysten/dapp-kit";
 
 interface SponsoredTransactionOptions {
     onSuccess?: (digest: string) => void;
@@ -16,7 +16,6 @@ interface SponsorResponse {
 export const useSponsoredTransaction = () => {
     const client = useSuiClient();
     const account = useCurrentAccount();
-    const { mutateAsync: signTransaction } = useSignTransaction();
     const [isExecuting, setIsExecuting] = useState(false);
 
     const executeSponsored = async (
@@ -33,20 +32,18 @@ export const useSponsoredTransaction = () => {
         try {
             setIsExecuting(true);
 
-            // Sign with user's zkLogin wallet (don't set sender first!)
-            // useSignTransaction will handle setting the sender
-            const { signature: userSignature } = await signTransaction({
-                transaction,
-                chain: 'sui:testnet',
-            });
+            // For zkLogin sponsored transactions:
+            // 1. Don't sign on frontend (zkLogin wallets have no gas)
+            // 2. Send unsigned transaction to sponsor API
+            // 3. Sponsor API will build, sign, and execute
 
-            // Serialize transaction for sponsor API
+            // Serialize transaction (unsigned)
             const transactionBytes = transaction.serialize();
             const transactionBase64 = btoa(String.fromCharCode.apply(null, Array.from(transactionBytes) as any));
 
-            console.log('Sending transaction to sponsor API with user signature...');
+            console.log('Sending unsigned transaction to sponsor API...');
 
-            // Send to sponsor API with user signature
+            // Send to sponsor API
             const response = await fetch('/api/sponsor', {
                 method: 'POST',
                 headers: {
@@ -55,7 +52,7 @@ export const useSponsoredTransaction = () => {
                 body: JSON.stringify({
                     transactionBytes: transactionBase64,
                     userAddress: account.address,
-                    userSignature, // Include user's signature
+                    // No user signature - sponsor handles everything
                 }),
             });
 
