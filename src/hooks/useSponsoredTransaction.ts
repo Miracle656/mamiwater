@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Transaction } from "@mysten/sui/transactions";
-import { useSuiClient, useCurrentAccount } from "@mysten/dapp-kit";
+import { useSuiClient, useCurrentAccount, useSignTransaction } from "@mysten/dapp-kit";
 
 interface SponsoredTransactionOptions {
     onSuccess?: (digest: string) => void;
@@ -16,6 +16,7 @@ interface SponsorResponse {
 export const useSponsoredTransaction = () => {
     const client = useSuiClient();
     const account = useCurrentAccount();
+    const { mutateAsync: signTransaction } = useSignTransaction();
     const [isExecuting, setIsExecuting] = useState(false);
 
     const executeSponsored = async (
@@ -32,14 +33,22 @@ export const useSponsoredTransaction = () => {
         try {
             setIsExecuting(true);
 
-            // Serialize transaction WITHOUT building (building requires gas coins)
-            // The sponsor API will build and add gas payment
+            // Set sender
+            transaction.setSender(account.address);
+
+            // Sign with user's zkLogin wallet
+            const { signature: userSignature } = await signTransaction({
+                transaction,
+                chain: 'sui:testnet',
+            });
+
+            // Serialize transaction for sponsor API
             const transactionBytes = transaction.serialize();
             const transactionBase64 = btoa(String.fromCharCode.apply(null, Array.from(transactionBytes) as any));
 
-            console.log('Sending transaction to sponsor API...');
+            console.log('Sending transaction to sponsor API with user signature...');
 
-            // Send to sponsor API
+            // Send to sponsor API with user signature
             const response = await fetch('/api/sponsor', {
                 method: 'POST',
                 headers: {
@@ -48,6 +57,7 @@ export const useSponsoredTransaction = () => {
                 body: JSON.stringify({
                     transactionBytes: transactionBase64,
                     userAddress: account.address,
+                    userSignature, // Include user's signature
                 }),
             });
 

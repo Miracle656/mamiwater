@@ -44,7 +44,7 @@ export default async function handler(
     }
 
     try {
-        const { transactionBytes, userAddress } = req.body;
+        const { transactionBytes, userAddress, userSignature } = req.body;
 
         if (!transactionBytes || !userAddress) {
             return res.status(400).json({ error: 'Missing required fields' });
@@ -80,21 +80,27 @@ export default async function handler(
         const transaction = Transaction.from(txBytesArray);
 
         // IMPORTANT: Set sender and gas owner BEFORE building
-        // This prevents the "no gas coins" error
         transaction.setSender(userAddress);
         transaction.setGasOwner(sponsorAddress);
         transaction.setGasBudget(10000000); // 0.01 SUI max
 
-        // Now build the transaction with sponsor's gas
+        // Build the transaction
         const builtTx = await transaction.build({ client });
 
         // Sign transaction with sponsor key
-        const signedTx = await sponsorKeypair.signTransaction(builtTx);
+        const sponsorSignedTx = await sponsorKeypair.signTransaction(builtTx);
+
+        // Combine signatures: [user signature, sponsor signature]
+        const signatures = userSignature
+            ? [userSignature, sponsorSignedTx.signature]
+            : [sponsorSignedTx.signature];
+
+        console.log(`Executing with ${signatures.length} signature(s)`);
 
         // Execute sponsored transaction
         const result = await client.executeTransactionBlock({
             transactionBlock: builtTx,
-            signature: signedTx.signature,
+            signature: signatures,
             options: {
                 showEffects: true,
                 showObjectChanges: true,
