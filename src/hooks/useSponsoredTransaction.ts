@@ -33,10 +33,8 @@ export const useSponsoredTransaction = () => {
         try {
             setIsExecuting(true);
 
-            // Set sender
-            transaction.setSender(account.address);
-
-            // Sign with user's zkLogin wallet
+            // Sign with user's zkLogin wallet (don't set sender first!)
+            // useSignTransaction will handle setting the sender
             const { signature: userSignature } = await signTransaction({
                 transaction,
                 chain: 'sui:testnet',
