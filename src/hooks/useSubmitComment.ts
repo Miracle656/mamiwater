@@ -1,13 +1,29 @@
 import { useSignAndExecuteTransaction, useCurrentAccount, useSuiClient } from "@mysten/dapp-kit";
 import { Transaction } from "@mysten/sui/transactions";
+import { useState, useEffect } from "react";
 import { PACKAGE_ID, REGISTRY_ID, MODULE_NAME } from "../constants";
 import { uploadToWalrus } from "../walrus";
 import { getDAppObjectId } from "../utils/getDAppObjectId";
+import { useSponsoredTransaction } from "./useSponsoredTransaction";
 
 export const useSubmitComment = () => {
     const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
     const account = useCurrentAccount();
     const client = useSuiClient();
+    const { executeSponsored, needsSponsorship } = useSponsoredTransaction();
+    const [useSponsored, setUseSponsored] = useState(false);
+
+    // Check if user needs sponsorship on mount
+    useEffect(() => {
+        const checkSponsorship = async () => {
+            const needs = await needsSponsorship();
+            setUseSponsored(needs);
+            if (needs) {
+                console.log('zkLogin user detected - will use sponsored transactions');
+            }
+        };
+        checkSponsorship();
+    }, [account?.address]);
 
     const submitComment = async (
         dappId: string, // This is the package address from Blockberry
@@ -52,19 +68,36 @@ export const useSubmitComment = () => {
                 ],
             });
 
-            signAndExecuteTransaction(
-                { transaction: tx },
-                {
-                    onSuccess: (result) => {
-                        console.log("Comment submitted!", result);
+            console.log(`Submitting comment (${useSponsored ? 'sponsored' : 'wallet'})...`);
+
+            if (useSponsored) {
+                // Use sponsored transaction for zkLogin users
+                await executeSponsored(tx, {
+                    onSuccess: (digest) => {
+                        console.log("✓ Comment submitted (gasless)!", digest);
                         if (onSuccess) onSuccess();
                     },
-                    onError: (err) => {
+                    onError: (err: any) => {
                         console.error("Comment submission failed", err);
                         if (onError) onError(err);
                     },
-                }
-            );
+                });
+            } else {
+                // Use traditional wallet signing
+                signAndExecuteTransaction(
+                    { transaction: tx },
+                    {
+                        onSuccess: (result) => {
+                            console.log("Comment submitted!", result);
+                            if (onSuccess) onSuccess();
+                        },
+                        onError: (err) => {
+                            console.error("Comment submission failed", err);
+                            if (onError) onError(err);
+                        },
+                    }
+                );
+            }
         } catch (error) {
             console.error("Failed to submit comment:", error);
             if (onError) onError(error);

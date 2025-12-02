@@ -1,4 +1,5 @@
-export const BLOCKBERRY_API_KEY = 'uEX3gyeTtmpcKDOZPgxctqNpHmsf7Y';
+import { BLOCKBERRY_API_KEY } from "../constants";
+
 export const BLOCKBERRY_BASE_URL = 'https://api.blockberry.one/sui/v1';
 
 export interface BlockberryDApp {

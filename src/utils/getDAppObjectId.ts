@@ -1,5 +1,5 @@
 import { SuiClient } from "@mysten/sui/client";
-import { PACKAGE_ID, REGISTRY_ID, MODULE_NAME } from "../constants";
+import { PACKAGE_ID, MODULE_NAME } from "../constants";
 
 /**
  * Fetch the DApp object ID from the registry using the dApp name
@@ -7,7 +7,7 @@ import { PACKAGE_ID, REGISTRY_ID, MODULE_NAME } from "../constants";
  */
 export async function getDAppObjectId(
     client: SuiClient,
-    packageAddress: string,
+    _packageAddress: string, // Prefixed with _ to indicate intentionally unused
     dappName?: string
 ): Promise<string | null> {
     try {
