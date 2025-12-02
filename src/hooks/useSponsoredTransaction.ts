@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Transaction } from "@mysten/sui/transactions";
-import { useSuiClient, useCurrentAccount } from "@mysten/dapp-kit";
+import { useCurrentAccount } from "@mysten/dapp-kit";
 
 interface SponsoredTransactionOptions {
     onSuccess?: (digest: string) => void;
@@ -14,7 +14,6 @@ interface SponsorResponse {
 }
 
 export const useSponsoredTransaction = () => {
-    const client = useSuiClient();
     const account = useCurrentAccount();
     const [isExecuting, setIsExecuting] = useState(false);
 
@@ -80,20 +79,26 @@ export const useSponsoredTransaction = () => {
 
     // Check if user needs sponsorship (zkLogin wallet with no gas)
     const needsSponsorship = async (): Promise<boolean> => {
+        // Sponsored transactions for zkLogin require Enoki's enterprise API
+        // For now, zkLogin users should get testnet SUI from faucet
+        // https://faucet.testnet.sui.io
+        return false;
+
+        /* Disabled until Enoki enterprise sponsorship is implemented
         if (!account?.address) return false;
 
         try {
-            // Check if user has any SUI coins
             const coins = await client.getCoins({
                 owner: account.address,
                 coinType: '0x2::sui::SUI',
             });
 
-            return coins.data.length === 0; // No coins = needs sponsorship
+            return coins.data.length === 0;
         } catch (error) {
             console.error('Error checking gas coins:', error);
             return false;
         }
+        */
     };
 
     return {
