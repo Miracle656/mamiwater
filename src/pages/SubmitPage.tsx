@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Rocket, Upload, Link as LinkIcon, Loader2, UserPlus } from 'lucide-react';
 import { categories } from '../data/mockData';
 import { useRegisterDApp } from '../hooks/useRegisterDApp';
+import { ADMIN_ADDRESS } from '../constants';
 import { useDeveloper } from '../hooks/useDeveloper';
 import { useCurrentAccount } from '@mysten/dapp-kit';
 import { useToast } from '../components/Toast';
@@ -254,10 +255,12 @@ export default function SubmitPage() {
                 </div>
             </div>
 
-            {/* Auto-Register Section */}
-            <div className="mb-8">
-                <AutoRegisterButton />
-            </div>
+            {/* Auto-Register Section (Admin Only) */}
+            {account && account.address === ADMIN_ADDRESS && (
+                <div className="mb-8">
+                    <AutoRegisterButton />
+                </div>
+            )}
 
             <div className="neo-box p-8 bg-white">
                 <form onSubmit={handleSubmit} className="space-y-8">

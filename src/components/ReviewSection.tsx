@@ -1,22 +1,29 @@
 import { useState } from 'react';
-import type { Review } from '../types';
+import type { Review, DApp } from '../types';
 import ReviewForm from './ReviewForm';
 import ReviewItem from './ReviewItem';
-import { Star } from 'lucide-react';
-
+import { Star, Database, Loader2 } from 'lucide-react';
+import { useSignAndExecuteTransaction, useCurrentAccount } from '@mysten/dapp-kit';
+import { createRegisterDAppTransaction } from '../utils/autoRegisterDApps';
+import { useToast } from './Toast';
+import { ADMIN_ADDRESS } from '../constants';
 
 interface ReviewSectionProps {
-    dappId: string;
-    dappName?: string;
-    packageId?: string | null;
+    dapp: DApp;
+    isRegistered: boolean;
     reviews: Review[];
     rating: number;
     reviewCount: number;
     onReviewSubmitted?: (review: { rating: number; title: string; content: string; verified: boolean }) => void;
+    onRegisterSuccess?: () => void;
 }
 
-export default function ReviewSection({ dappId, dappName, packageId, reviews, rating, reviewCount, onReviewSubmitted }: ReviewSectionProps) {
+export default function ReviewSection({ dapp, isRegistered, reviews, rating, reviewCount, onReviewSubmitted, onRegisterSuccess }: ReviewSectionProps) {
     const [sortBy] = useState<'recent' | 'helpful'>('recent');
+    const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
+    const account = useCurrentAccount();
+    const [isRegistering, setIsRegistering] = useState(false);
+    const { success, error } = useToast();
 
     // Calculate rating distribution
     const distribution = [5, 4, 3, 2, 1].map(star => {
@@ -31,6 +38,34 @@ export default function ReviewSection({ dappId, dappName, packageId, reviews, ra
         }
         return b.helpful - a.helpful;
     });
+
+    const handleRegister = () => {
+        setIsRegistering(true);
+        try {
+            const tx = createRegisterDAppTransaction(dapp);
+
+            signAndExecuteTransaction(
+                { transaction: tx },
+                {
+                    onSuccess: (result) => {
+                        console.log("dApp registered:", result);
+                        success("dApp registered successfully! You can now leave a review.");
+                        setIsRegistering(false);
+                        if (onRegisterSuccess) onRegisterSuccess();
+                    },
+                    onError: (err) => {
+                        console.error("Registration failed:", err);
+                        error("Failed to register dApp. Please try again.");
+                        setIsRegistering(false);
+                    }
+                }
+            );
+        } catch (err) {
+            console.error("Error creating transaction:", err);
+            error("Failed to create registration transaction.");
+            setIsRegistering(false);
+        }
+    };
 
     return (
         <div className="space-y-8">
@@ -71,7 +106,49 @@ export default function ReviewSection({ dappId, dappName, packageId, reviews, ra
 
                 {/* Review Form & List */}
                 <div className="w-full space-y-6">
-                    <ReviewForm dappId={dappId} dappName={dappName} packageId={packageId} onReviewSubmitted={onReviewSubmitted} />
+                    {!isRegistered ? (
+                        <div className="neo-box p-6 bg-neo-yellow border-3 border-neo-black text-center">
+                            <Database className="w-12 h-12 mx-auto mb-4 text-neo-black" />
+                            <h3 className="text-xl font-black uppercase mb-2">Registration Required</h3>
+
+                            {account && account.address === ADMIN_ADDRESS ? (
+                                <>
+                                    <p className="text-neo-black font-medium mb-6">
+                                        This dApp needs to be registered on-chain before users can leave reviews.
+                                        As an admin, you can register it now.
+                                    </p>
+                                    <button
+                                        onClick={handleRegister}
+                                        disabled={isRegistering}
+                                        className="px-8 py-3 bg-neo-black text-white border-3 border-neo-black shadow-neo font-black uppercase hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_#888888] transition-all flex items-center justify-center gap-2 mx-auto disabled:opacity-50"
+                                    >
+                                        {isRegistering ? (
+                                            <>
+                                                <Loader2 className="w-5 h-5 animate-spin" />
+                                                <span>Registering...</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <span>Register {dapp.name}</span>
+                                            </>
+                                        )}
+                                    </button>
+                                </>
+                            ) : (
+                                <p className="text-neo-black font-medium">
+                                    This dApp has not been registered for reviews yet.
+                                    Please check back later or contact the platform administrator.
+                                </p>
+                            )}
+                        </div>
+                    ) : (
+                        <ReviewForm
+                            dappId={dapp.id}
+                            dappName={dapp.name}
+                            packageId={dapp.packageId}
+                            onReviewSubmitted={onReviewSubmitted}
+                        />
+                    )}
 
                     <div className="space-y-6">
                         {sortedReviews.map((review) => (

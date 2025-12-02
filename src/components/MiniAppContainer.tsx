@@ -1,4 +1,4 @@
-import { X, MoreHorizontal, ChevronDown, ChevronUp } from 'lucide-react';
+import { X, ChevronDown, ChevronUp, Globe } from 'lucide-react';
 import { useMiniApp } from '../context/MiniAppContext';
 
 export default function MiniAppContainer() {
@@ -37,9 +37,16 @@ export default function MiniAppContainer() {
                     >
                         {isMinimized ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                     </button>
-                    <button className="p-1.5 bg-white border-2 border-neo-black hover:bg-neo-black hover:text-white transition-colors shadow-neo-sm">
-                        <MoreHorizontal className="w-4 h-4" />
-                    </button>
+                    <a
+                        href={activeDApp.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="p-1.5 bg-white border-2 border-neo-black hover:bg-neo-black hover:text-white transition-colors shadow-neo-sm flex items-center justify-center"
+                        title="Open in new tab"
+                    >
+                        <Globe className="w-4 h-4" />
+                    </a>
                     <button
                         onClick={(e) => { e.stopPropagation(); closeMiniApp(); }}
                         className="p-1.5 bg-neo-red border-2 border-neo-black text-white hover:bg-red-600 transition-colors shadow-neo-sm"

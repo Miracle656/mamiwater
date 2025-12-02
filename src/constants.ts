@@ -12,6 +12,10 @@ export const SPONSOR_ADDRESS = import.meta.env.VITE_SPONSOR_ADDRESS || '';
 // Blockberry API
 export const BLOCKBERRY_API_KEY = import.meta.env.VITE_BLOCKBERRY_API_KEY || 'uEX3gyeTtmpcKDOZPgxctqNpHmsf7Y';
 
+// Admin Configuration
+// The address allowed to perform administrative actions like registering dApps
+export const ADMIN_ADDRESS = import.meta.env.VITE_ADMIN_ADDRESS || '';
+
 // Walrus Configuration - Multiple endpoints for fallback
 export const WALRUS_PUBLISHERS = [
     'https://walrus-testnet-publisher.nodes.guru/v1/blobs',

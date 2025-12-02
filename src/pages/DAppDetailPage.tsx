@@ -370,13 +370,17 @@ export default function DAppDetailPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
                 <div className="neo-box p-8 bg-white">
                     <ReviewSection
-                        dappId={dapp.id}
-                        dappName={dapp.name}
-                        packageId={dapp.packageId}
+                        dapp={dapp}
+                        isRegistered={!!onChainDApp}
                         reviews={reviews}
                         rating={dapp.rating}
                         reviewCount={dapp.reviewCount}
                         onReviewSubmitted={(review: { rating: number; title: string; content: string; verified: boolean }) => handleAddReview(review)}
+                        onRegisterSuccess={() => {
+                            // Force refresh or just let the user know
+                            console.log("Registered!");
+                            window.location.reload();
+                        }}
                     />
                 </div>
                 <div className="neo-box p-8 bg-white">
