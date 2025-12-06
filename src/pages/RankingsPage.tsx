@@ -48,23 +48,23 @@ export default function RankingsPage() {
     }
 
     return (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="mb-8">
-                <h1 className="text-4xl font-black uppercase mb-2 tracking-tighter">dApp Rankings</h1>
-                <p className="text-xl font-medium text-gray-600 border-l-4 border-neo-pink pl-4">Discover the top performing dApps on Sui</p>
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
+            <div className="mb-6 sm:mb-8">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-black uppercase mb-2 tracking-tighter">dApp Rankings</h1>
+                <p className="text-base sm:text-lg md:text-xl font-medium text-gray-600 border-l-2 sm:border-l-4 border-neo-pink pl-3 sm:pl-4">Discover the top performing dApps on Sui</p>
             </div>
 
             {/* Filters */}
-            <div className="neo-box p-6 bg-white mb-8">
-                <div className="flex flex-wrap gap-6 items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                        <span className="text-sm font-black uppercase text-gray-500">Sort by:</span>
+            <div className="neo-box p-4 sm:p-6 bg-white mb-6 sm:mb-8">
+                <div className="flex flex-col sm:flex-row flex-wrap gap-4 sm:gap-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 flex-1">
+                        <span className="text-xs sm:text-sm font-black uppercase text-gray-500 whitespace-nowrap">Sort by:</span>
                         <div className="flex flex-wrap gap-2">
                             {(['rank', 'users', 'volume', 'tvl', 'rating'] as SortOption[]).map((option) => (
                                 <button
                                     key={option}
                                     onClick={() => setSortBy(option)}
-                                    className={`px-4 py-2 border-2 border-neo-black text-sm font-bold uppercase transition-all shadow-neo-sm ${sortBy === option
+                                    className={`px-3 sm:px-4 py-1.5 sm:py-2 border-2 border-neo-black text-xs sm:text-sm font-bold uppercase transition-all shadow-neo-sm ${sortBy === option
                                         ? 'bg-neo-black text-white'
                                         : 'bg-white hover:bg-neo-yellow text-neo-black'
                                         }`}
@@ -75,14 +75,14 @@ export default function RankingsPage() {
                         </div>
                     </div>
 
-                    <div className="flex items-center space-x-4">
-                        <span className="text-sm font-black uppercase text-gray-500">Time:</span>
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                        <span className="text-xs sm:text-sm font-black uppercase text-gray-500 whitespace-nowrap">Time:</span>
                         <div className="flex gap-2">
                             {(['24h', '7d', '30d', 'all'] as TimeFilter[]).map((filter) => (
                                 <button
                                     key={filter}
                                     onClick={() => setTimeFilter(filter)}
-                                    className={`px-3 py-1.5 border-2 border-neo-black text-sm font-bold uppercase transition-all shadow-neo-sm ${timeFilter === filter
+                                    className={`px-2.5 sm:px-3 py-1 sm:py-1.5 border-2 border-neo-black text-xs sm:text-sm font-bold uppercase transition-all shadow-neo-sm ${timeFilter === filter
                                         ? 'bg-neo-green text-neo-black'
                                         : 'bg-white hover:bg-neo-cyan text-neo-black'
                                         }`}
@@ -97,18 +97,18 @@ export default function RankingsPage() {
 
             {/* Rankings Table */}
             <div className="neo-box bg-white overflow-hidden">
-                <div className="overflow-x-auto">
-                    <table className="w-full">
-                        <thead className="bg-neo-yellow border-b-3 border-neo-black">
+                <div className="overflow-x-auto -mx-3 sm:mx-0">
+                    <table className="w-full min-w-[800px]">
+                        <thead className="bg-neo-yellow border-b-2 sm:border-b-3 border-neo-black">
                             <tr>
-                                <th className="px-6 py-4 text-left text-sm font-black uppercase text-neo-black">Rank</th>
-                                <th className="px-6 py-4 text-left text-sm font-black uppercase text-neo-black">dApp</th>
-                                <th className="px-6 py-4 text-left text-sm font-black uppercase text-neo-black">Category</th>
-                                <th className="px-6 py-4 text-right text-sm font-black uppercase text-neo-black">Users (24h)</th>
-                                <th className="px-6 py-4 text-right text-sm font-black uppercase text-neo-black">Volume (24h)</th>
-                                <th className="px-6 py-4 text-right text-sm font-black uppercase text-neo-black">TVL</th>
-                                <th className="px-6 py-4 text-right text-sm font-black uppercase text-neo-black">Rating</th>
-                                <th className="px-6 py-4 text-right text-sm font-black uppercase text-neo-black">Change</th>
+                                <th className="px-3 sm:px-6 py-2 sm:py-4 text-left text-xs sm:text-sm font-black uppercase text-neo-black">Rank</th>
+                                <th className="px-3 sm:px-6 py-2 sm:py-4 text-left text-xs sm:text-sm font-black uppercase text-neo-black">dApp</th>
+                                <th className="px-3 sm:px-6 py-2 sm:py-4 text-left text-xs sm:text-sm font-black uppercase text-neo-black hidden md:table-cell">Category</th>
+                                <th className="px-3 sm:px-6 py-2 sm:py-4 text-right text-xs sm:text-sm font-black uppercase text-neo-black">Users</th>
+                                <th className="px-3 sm:px-6 py-2 sm:py-4 text-right text-xs sm:text-sm font-black uppercase text-neo-black hidden sm:table-cell">Volume</th>
+                                <th className="px-3 sm:px-6 py-2 sm:py-4 text-right text-xs sm:text-sm font-black uppercase text-neo-black hidden lg:table-cell">TVL</th>
+                                <th className="px-3 sm:px-6 py-2 sm:py-4 text-right text-xs sm:text-sm font-black uppercase text-neo-black hidden md:table-cell">Rating</th>
+                                <th className="px-3 sm:px-6 py-2 sm:py-4 text-right text-xs sm:text-sm font-black uppercase text-neo-black">Change</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y-2 divide-neo-black">

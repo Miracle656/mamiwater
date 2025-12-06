@@ -180,20 +180,20 @@ export default function DAppDetailPage() {
         .slice(0, 3);
 
     return (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
             {/* Back Button */}
             <Link
                 to="/"
-                className="inline-flex items-center space-x-2 text-gray-500 hover:text-neo-black mb-6 transition-colors font-bold uppercase"
+                className="inline-flex items-center space-x-1 sm:space-x-2 text-gray-500 hover:text-neo-black mb-4 sm:mb-6 transition-colors font-bold uppercase text-sm sm:text-base"
             >
-                <ArrowLeft className="w-5 h-5" />
+                <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span>Back to dApps</span>
             </Link>
 
             {/* Hero Section */}
-            <div className="neo-box bg-white mb-8 overflow-hidden">
+            <div className="neo-box bg-white mb-6 sm:mb-8 overflow-hidden">
                 {/* Banner */}
-                <div className="relative h-64 bg-neo-black border-b-3 border-neo-black">
+                <div className="relative h-40 sm:h-48 md:h-64 bg-neo-black border-b-2 sm:border-b-3 border-neo-black">
                     {dapp.bannerUrl && (
                         <img
                             src={dapp.bannerUrl}
@@ -210,9 +210,9 @@ export default function DAppDetailPage() {
                 </div>
 
                 {/* Info */}
-                <div className="p-8">
-                    <div className="flex flex-col md:flex-row items-start gap-6">
-                        <div className="w-24 h-24 bg-neo-white border-3 border-neo-black shadow-neo flex items-center justify-center text-5xl flex-shrink-0 -mt-16 relative z-10 overflow-hidden">
+                <div className="p-4 sm:p-6 md:p-8">
+                    <div className="flex flex-col md:flex-row items-start gap-4 sm:gap-6">
+                        <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-neo-white border-2 sm:border-3 border-neo-black shadow-neo flex items-center justify-center text-3xl sm:text-4xl md:text-5xl flex-shrink-0 -mt-8 sm:-mt-12 md:-mt-16 relative z-10 overflow-hidden">
                             {dapp.iconUrl ? (
                                 <img src={dapp.iconUrl} alt={dapp.name} className="w-full h-full object-cover" />
                             ) : (
@@ -221,10 +221,10 @@ export default function DAppDetailPage() {
                         </div>
 
                         <div className="flex-1 w-full">
-                            <div className="flex flex-col md:flex-row items-start justify-between mb-4 gap-4">
-                                <div>
-                                    <h1 className="text-4xl font-black uppercase mb-2 tracking-tighter">{dapp.name}</h1>
-                                    <p className="text-xl font-medium text-gray-600 mb-4 border-l-4 border-neo-yellow pl-4">{dapp.tagline}</p>
+                            <div className="flex flex-col lg:flex-row items-start justify-between mb-4 gap-4">
+                                <div className="w-full lg:flex-1">
+                                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-black uppercase mb-2 tracking-tighter break-words">{dapp.name}</h1>
+                                    <p className="text-base sm:text-lg md:text-xl font-medium text-gray-600 mb-4 border-l-2 sm:border-l-4 border-neo-yellow pl-3 sm:pl-4">{dapp.tagline}</p>
                                     <div className="flex items-center space-x-4">
                                         <span className="px-3 py-1 bg-neo-cyan border-2 border-neo-black text-neo-black text-sm font-bold uppercase shadow-neo-sm">
                                             {dapp.category}
@@ -239,10 +239,10 @@ export default function DAppDetailPage() {
 
                                 <button
                                     onClick={handleOpenApp}
-                                    className="px-8 py-4 bg-neo-pink text-neo-black border-3 border-neo-black shadow-neo font-black uppercase hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_#000000] transition-all flex items-center space-x-2"
+                                    className="w-full lg:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-neo-pink text-neo-black border-2 sm:border-3 border-neo-black shadow-neo font-black uppercase text-sm sm:text-base hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_#000000] transition-all flex items-center justify-center space-x-2"
                                 >
                                     <span>Open dApp</span>
-                                    <ExternalLink className="w-5 h-5" />
+                                    <ExternalLink className="w-4 h-4 sm:w-5 sm:h-5" />
                                 </button>
                             </div>
 
@@ -275,13 +275,14 @@ export default function DAppDetailPage() {
             </div>
 
             {/* Metrics Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <div className="neo-box p-6 bg-white hover:bg-neo-yellow transition-colors">
-                    <div className="flex items-center space-x-2 text-gray-500 mb-2 font-bold uppercase text-xs">
-                        <Users className="w-4 h-4" />
-                        <span>Users (24h)</span>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mb-6 sm:mb-8">
+                <div className="neo-box p-3 sm:p-4 md:p-6 bg-white hover:bg-neo-yellow transition-colors">
+                    <div className="flex items-center space-x-1 sm:space-x-2 text-gray-500 mb-1 sm:mb-2 font-bold uppercase text-[10px] sm:text-xs">
+                        <Users className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <span className="hidden sm:inline">Users (24h)</span>
+                        <span className="sm:hidden">Users</span>
                     </div>
-                    <div className="text-3xl font-black">{formatNumber(dapp.metrics.users24h)}</div>
+                    <div className="text-lg sm:text-2xl md:text-3xl font-black truncate">{formatNumber(dapp.metrics.users24h)}</div>
                 </div>
 
                 <div className="neo-box p-6 bg-white hover:bg-neo-green transition-colors">
@@ -312,8 +313,8 @@ export default function DAppDetailPage() {
             </div>
 
             {/* Description and Features */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-                <div className="lg:col-span-2 neo-box p-8 bg-white">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 mb-6 sm:mb-8">
+                <div className="lg:col-span-2 neo-box p-4 sm:p-6 md:p-8 bg-white">
                     <h2 className="text-2xl font-black uppercase mb-4 border-b-3 border-neo-black pb-2 inline-block">About</h2>
                     <p className="text-neo-black font-medium mb-8 leading-relaxed">{dapp.description}</p>
 
@@ -367,7 +368,7 @@ export default function DAppDetailPage() {
             </div>
 
             {/* Reviews & Comments Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8 mb-8 sm:mb-12">
                 <div className="neo-box p-8 bg-white">
                     <ReviewSection
                         dapp={dapp}
@@ -394,8 +395,8 @@ export default function DAppDetailPage() {
             {/* Similar dApps */}
             {similarDApps.length > 0 && (
                 <div>
-                    <h2 className="text-3xl font-black uppercase mb-8 tracking-tighter">Similar dApps</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <h2 className="text-xl sm:text-2xl md:text-3xl font-black uppercase mb-4 sm:mb-6 md:mb-8 tracking-tighter">Similar dApps</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                         {similarDApps.map(similar => (
                             <DAppCard key={similar.id} dapp={similar} />
                         ))}

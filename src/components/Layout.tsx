@@ -30,17 +30,17 @@ export default function Layout() {
                     </main>
                 </div>
                 <MiniAppContainer />
-                <footer className="border-t-3 border-neo-black py-12 bg-neo-black text-neo-white mt-auto">
+                <footer className="border-t-2 sm:border-t-3 border-neo-black py-8 sm:py-12 bg-neo-black text-neo-white mt-auto">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                            <div>
-                                <div className="flex items-center space-x-3 mb-4">
-                                    <div className="w-10 h-10 border-2 border-white flex items-center justify-center text-neo-black shadow-[4px_4px_0px_0px_#ffffff] overflow-hidden">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
+                            <div className="sm:col-span-2 md:col-span-1">
+                                <div className="flex items-center space-x-2 sm:space-x-3 mb-3 sm:mb-4">
+                                    <div className="w-8 h-8 sm:w-10 sm:h-10 border-2 border-white flex items-center justify-center text-neo-black shadow-[4px_4px_0px_0px_#ffffff] overflow-hidden">
                                         <img src={logo} alt="Atlantis Logo" className="w-full h-full object-cover" />
                                     </div>
-                                    <span className="font-black text-xl uppercase tracking-tighter font-dungeon">ATLANTIS</span>
+                                    <span className="font-black text-lg sm:text-xl uppercase tracking-tighter font-dungeon">ATLANTIS</span>
                                 </div>
-                                <p className="text-sm font-medium text-gray-300">
+                                <p className="text-xs sm:text-sm font-medium text-gray-300">
                                     Discover the best dApps in the Sui ecosystem.
                                     <br />
                                     <span className="text-neo-yellow font-bold uppercase">Raw. Real-time. Brutal.</span>
@@ -48,8 +48,8 @@ export default function Layout() {
                             </div>
 
                             <div>
-                                <h3 className="font-black uppercase text-neo-pink mb-4 text-lg">Explore</h3>
-                                <ul className="space-y-2 text-sm font-bold uppercase tracking-wide">
+                                <h3 className="font-black uppercase text-neo-pink mb-3 sm:mb-4 text-base sm:text-lg">Explore</h3>
+                                <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm font-bold uppercase tracking-wide">
                                     <li><a href="/" className="hover:text-neo-yellow transition-colors hover:underline decoration-2 underline-offset-4">Trending</a></li>
                                     <li><a href="/rankings" className="hover:text-neo-yellow transition-colors hover:underline decoration-2 underline-offset-4">Rankings</a></li>
                                     <li><a href="/submit" className="hover:text-neo-yellow transition-colors hover:underline decoration-2 underline-offset-4">Submit dApp</a></li>
