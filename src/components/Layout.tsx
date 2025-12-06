@@ -76,15 +76,18 @@ export default function Layout() {
                             </div>
                         </div>
 
-                        <div className="mt-12 pt-8 border-t-2 border-white/20 text-center text-sm font-bold uppercase tracking-widest text-gray-400">
+                        <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t-2 border-white/20 text-center text-xs sm:text-sm font-bold uppercase tracking-wide sm:tracking-widest text-gray-400">
                             <p>© 2025 ATLANTIS. Built for the Sui ecosystem.</p>
                             {/* Fun Badge */}
-                            <div className="mt-8 flex justify-center">
-                                <div className="bg-white border-2 border-black px-6 py-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] inline-block transform -rotate-2">
-                                    <p className=" flex items-center gap-2 font-black uppercase text-sm">Powered by
-                                        <img className='w-16 h-16 object-contain' src={suilogo} alt="" />
-                                        <img src={walruslogo} alt="" />
-                                        <img className='w-16 h-16 object-contain' src={suinslogo} alt="" />
+                            <div className="mt-6 sm:mt-8 flex justify-center px-4">
+                                <div className="bg-white border-2 border-black px-3 sm:px-6 py-2 sm:py-3 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] inline-block transform -rotate-1 sm:-rotate-2">
+                                    <p className="flex flex-col sm:flex-row items-center gap-1.5 sm:gap-2 font-black uppercase text-xs sm:text-sm">
+                                        <span className="whitespace-nowrap">Powered by</span>
+                                        <span className="flex items-center gap-1.5 sm:gap-2">
+                                            <img className='w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 object-contain' src={suilogo} alt="Sui" />
+                                            <img className='w-12 h-6 sm:w-16 sm:h-8 md:w-20 md:h-10 object-contain' src={walruslogo} alt="Walrus" />
+                                            <img className='w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 object-contain' src={suinslogo} alt="SuiNS" />
+                                        </span>
                                     </p>
                                 </div>
                             </div>

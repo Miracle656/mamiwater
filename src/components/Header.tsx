@@ -154,7 +154,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
 
                     <div className="h-8 w-1 bg-neo-black hidden lg:block" />
 
-                    <div className="flex items-center">
+                    <div className="hidden md:flex items-center">
                         <div className="neo-button-wrapper">
                             <ConnectButton connectText="CONNECT" className="!bg-neo-pink !text-neo-black !font-black !border-2 !border-neo-black !shadow-[4px_4px_0px_0px_#000000] hover:!translate-y-[-2px] hover:!shadow-[6px_6px_0px_0px_#000000] !transition-all !rounded-none !uppercase !px-2 sm:!px-4 !py-1.5 sm:!py-2 !h-auto !text-xs sm:!text-sm" />
                         </div>
