@@ -61,23 +61,23 @@ export default function Header({ onMenuClick }: HeaderProps) {
     };
 
     return (
-        <header className="sticky top-0 z-50 bg-neo-white border-b-3 border-neo-black h-20">
-            <div className="h-full px-4 flex items-center justify-between">
+        <header className="sticky top-0 z-50 bg-neo-white border-b-3 border-neo-black h-16 sm:h-20">
+            <div className="h-full px-2 sm:px-4 flex items-center justify-between gap-2">
                 {/* Left Section: Menu & Logo */}
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-shrink">
                     <button
                         onClick={onMenuClick}
-                        className="md:hidden p-2 hover:bg-neo-yellow border-2 border-transparent hover:border-neo-black transition-all"
+                        className="md:hidden p-1.5 sm:p-2 hover:bg-neo-yellow border-2 border-transparent hover:border-neo-black transition-all flex-shrink-0"
                     >
-                        <Menu className="w-6 h-6 text-neo-black" />
+                        <Menu className="w-5 h-5 sm:w-6 sm:h-6 text-neo-black" />
                     </button>
 
                     {/* Logo */}
-                    <Link to="/" className="flex items-center space-x-3 min-w-[200px] group">
-                        <div className="w-10 h-10 border-3 border-neo-black shadow-neo-sm flex items-center justify-center group-hover:translate-x-1 group-hover:translate-y-1 group-hover:shadow-none transition-all overflow-hidden bg-white">
+                    <Link to="/" className="flex items-center space-x-2 sm:space-x-3 group min-w-0">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 border-2 sm:border-3 border-neo-black shadow-neo-sm flex items-center justify-center group-hover:translate-x-1 group-hover:translate-y-1 group-hover:shadow-none transition-all overflow-hidden bg-white flex-shrink-0">
                             <img src={logo} alt="Atlantis Logo" className="w-full h-full object-cover" />
                         </div>
-                        <span className="text-xl font-black text-neo-black uppercase tracking-tighter font-dungeon">
+                        <span className="text-base sm:text-xl font-black text-neo-black uppercase tracking-tighter font-dungeon truncate">
                             ATLANTIS
                         </span>
                     </Link>
@@ -139,24 +139,24 @@ export default function Header({ onMenuClick }: HeaderProps) {
                 </div>
 
                 {/* Right Actions */}
-                <div className="flex items-center space-x-4 md:space-x-6">
-                    <button className="md:hidden p-2 hover:bg-neo-cyan border-2 border-transparent hover:border-neo-black transition-all">
-                        <Search className="w-6 h-6 text-neo-black" />
+                <div className="flex items-center space-x-2 sm:space-x-4 md:space-x-6 flex-shrink-0">
+                    <button className="md:hidden p-1.5 sm:p-2 hover:bg-neo-cyan border-2 border-transparent hover:border-neo-black transition-all flex-shrink-0">
+                        <Search className="w-5 h-5 sm:w-6 sm:h-6 text-neo-black" />
                     </button>
 
                     <Link
                         to="/submit"
-                        className="hidden md:flex items-center space-x-2 px-4 py-2 bg-neo-white border-3 border-neo-black shadow-neo hover:shadow-neo-lg hover:-translate-y-1 transition-all text-sm font-bold text-neo-black uppercase"
+                        className="hidden lg:flex items-center space-x-2 px-3 py-2 bg-neo-white border-3 border-neo-black shadow-neo hover:shadow-neo-lg hover:-translate-y-1 transition-all text-sm font-bold text-neo-black uppercase"
                     >
                         <Rocket className="w-4 h-4" />
                         <span>List Project</span>
                     </Link>
 
-                    <div className="h-8 w-1 bg-neo-black hidden md:block" />
+                    <div className="h-8 w-1 bg-neo-black hidden lg:block" />
 
-                    <div className="flex items-center">
+                    <div className="hidden md:flex items-center">
                         <div className="neo-button-wrapper">
-                            <ConnectButton connectText="GET STARTED" className="!bg-neo-pink !text-neo-black !font-black !border-2 !border-neo-black !shadow-[4px_4px_0px_0px_#000000] hover:!translate-y-[-2px] hover:!shadow-[6px_6px_0px_0px_#000000] !transition-all !rounded-none !uppercase !px-4 !py-2 !h-auto" />
+                            <ConnectButton connectText="CONNECT" className="!bg-neo-pink !text-neo-black !font-black !border-2 !border-neo-black !shadow-[4px_4px_0px_0px_#000000] hover:!translate-y-[-2px] hover:!shadow-[6px_6px_0px_0px_#000000] !transition-all !rounded-none !uppercase !px-2 sm:!px-4 !py-1.5 sm:!py-2 !h-auto !text-xs sm:!text-sm" />
                         </div>
                     </div>
                 </div>

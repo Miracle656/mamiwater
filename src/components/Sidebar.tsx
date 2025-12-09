@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import type { Category } from '../types';
 import { categories } from '../data/mockData';
 import { useState } from 'react';
+import { ConnectButton } from '@mysten/dapp-kit';
 import {
     Coins,
     Image,
@@ -100,6 +101,14 @@ export default function Sidebar({ selectedCategory = 'all', onCategoryChange, is
                     >
                         {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
                     </button>
+
+                    {/* Connect Wallet Button - Mobile Only */}
+                    <div className="md:hidden mb-4">
+                        <ConnectButton
+                            connectText="CONNECT WALLET"
+                            className="!w-full !bg-neo-pink !text-neo-black !font-black !border-2 !border-neo-black !shadow-neo !px-4 !py-3 !text-sm !uppercase hover:!translate-y-[-2px] hover:!shadow-neo-lg !transition-all !rounded-none"
+                        />
+                    </div>
 
                     {/* Explore Web3 */}
                     <div>
