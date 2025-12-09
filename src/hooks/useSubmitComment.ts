@@ -1,29 +1,16 @@
-import { useSignAndExecuteTransaction, useCurrentAccount, useSuiClient } from "@mysten/dapp-kit";
+import { useCurrentAccount, useSignTransaction, useSuiClient } from "@mysten/dapp-kit";
 import { Transaction } from "@mysten/sui/transactions";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { PACKAGE_ID, REGISTRY_ID, MODULE_NAME } from "../constants";
 import { uploadToWalrus } from "../walrus";
 import { getDAppObjectId } from "../utils/getDAppObjectId";
-import { useSponsoredTransaction } from "./useSponsoredTransaction";
+import { createSponsoredTransaction, executeSponsoredTransaction } from "../services/api";
 
 export const useSubmitComment = () => {
-    const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
     const account = useCurrentAccount();
     const client = useSuiClient();
-    const { executeSponsored, needsSponsorship } = useSponsoredTransaction();
-    const [useSponsored, setUseSponsored] = useState(false);
-
-    // Check if user needs sponsorship on mount
-    useEffect(() => {
-        const checkSponsorship = async () => {
-            const needs = await needsSponsorship();
-            setUseSponsored(needs);
-            if (needs) {
-                console.log('zkLogin user detected - will use sponsored transactions');
-            }
-        };
-        checkSponsorship();
-    }, [account?.address]);
+    const { mutateAsync: signTransaction } = useSignTransaction();
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const submitComment = async (
         dappId: string, // This is the package address from Blockberry
@@ -34,11 +21,13 @@ export const useSubmitComment = () => {
         onError?: (error: any) => void
     ) => {
         try {
+            setIsSubmitting(true);
+
             if (!account) {
-                throw new Error("Wallet not connected");
+                throw new Error("Please connect your wallet first");
             }
 
-            // 1. Get the DApp Object ID using the dApp name
+            // --- STEP 1: Get the DApp Object ID using the dApp name ---
             console.log("Fetching DApp object ID for:", dappName || dappId);
             const dappObjectId = await getDAppObjectId(client, dappId, dappName);
 
@@ -48,12 +37,12 @@ export const useSubmitComment = () => {
 
             console.log("DApp Object ID:", dappObjectId);
 
-            // 2. Upload content to Walrus
+            // --- STEP 2: Upload content to Walrus ---
             console.log("Uploading comment to Walrus...");
             const contentBlobId = await uploadToWalrus(content);
             console.log("Comment Blob ID:", contentBlobId);
 
-            // 3. Submit transaction
+            // --- STEP 3: Build Transaction ---
             const tx = new Transaction();
 
             tx.moveCall({
@@ -68,41 +57,57 @@ export const useSubmitComment = () => {
                 ],
             });
 
-            console.log(`Submitting comment (${useSponsored ? 'sponsored' : 'wallet'})...`);
+            // --- STEP 4: Build transaction bytes (onlyTransactionKind: true) ---
+            console.log("Building transaction...");
+            tx.setSender(account.address);
+            const transactionKindBytes = await tx.build({
+                client,
+                onlyTransactionKind: true
+            });
 
-            if (useSponsored) {
-                // Use sponsored transaction for zkLogin users
-                await executeSponsored(tx, {
-                    onSuccess: (digest) => {
-                        console.log("✓ Comment submitted (gasless)!", digest);
-                        if (onSuccess) onSuccess();
-                    },
-                    onError: (err: any) => {
-                        console.error("Comment submission failed", err);
-                        if (onError) onError(err);
-                    },
-                });
-            } else {
-                // Use traditional wallet signing
-                signAndExecuteTransaction(
-                    { transaction: tx },
-                    {
-                        onSuccess: (result) => {
-                            console.log("Comment submitted!", result);
-                            if (onSuccess) onSuccess();
-                        },
-                        onError: (err) => {
-                            console.error("Comment submission failed", err);
-                            if (onError) onError(err);
-                        },
-                    }
-                );
-            }
-        } catch (error) {
+            // Convert Uint8Array to base64 string
+            const transactionKindBytesBase64 = btoa(
+                String.fromCharCode(...transactionKindBytes)
+            );
+
+            // --- STEP 5: Create sponsored transaction ---
+            console.log("Creating sponsored transaction...");
+            const sponsoredTx = await createSponsoredTransaction(
+                transactionKindBytesBase64,
+                account.address
+            );
+
+            console.log("Sponsored transaction created:", sponsoredTx.digest);
+
+            // --- STEP 6: Sign the sponsored transaction bytes ---
+            console.log("Signing sponsored transaction...");
+            // Convert base64 bytes back to Uint8Array for signing
+            const sponsoredBytes = Uint8Array.from(atob(sponsoredTx.bytes), c => c.charCodeAt(0));
+
+            // Build a transaction from the sponsored bytes for signing
+            const txToSign = Transaction.from(sponsoredBytes);
+            const { signature } = await signTransaction({
+                transaction: txToSign,
+            });
+
+            // --- STEP 7: Execute sponsored transaction ---
+            console.log("Executing sponsored transaction...");
+            const result = await executeSponsoredTransaction(
+                sponsoredTx.digest,
+                signature
+            );
+
+            console.log("✅ Gasless comment submitted!", result.digest);
+            setIsSubmitting(false);
+            if (onSuccess) onSuccess();
+
+        } catch (error: any) {
             console.error("Failed to submit comment:", error);
+            setIsSubmitting(false);
             if (onError) onError(error);
         }
     };
 
-    return { submitComment };
+    return { submitComment, isSubmitting };
 };
+

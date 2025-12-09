@@ -1,13 +1,15 @@
-import { useSignAndExecuteTransaction, useSuiClient } from "@mysten/dapp-kit";
+import { useCurrentAccount, useSignTransaction, useSuiClient } from "@mysten/dapp-kit";
 import { Transaction } from "@mysten/sui/transactions";
 import { useState } from "react";
 import { PACKAGE_ID, REGISTRY_ID, MODULE_NAME } from "../constants";
 import { uploadToWalrus } from "../walrus";
 import { getDAppObjectId } from "../utils/getDAppObjectId";
+import { createSponsoredTransaction, executeSponsoredTransaction } from "../services/api";
 
 export const useSubmitReview = () => {
     const client = useSuiClient();
-    const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
+    const account = useCurrentAccount();
+    const { mutateAsync: signTransaction } = useSignTransaction();
     const [isUploading, setIsUploading] = useState(false);
 
     const submitReview = async (
@@ -22,6 +24,10 @@ export const useSubmitReview = () => {
     ) => {
         try {
             setIsUploading(true);
+
+            if (!account) {
+                throw new Error("Please connect your wallet first");
+            }
 
             // --- STEP 1: Get the DApp Object ID using the dApp name ---
             console.log("Fetching DApp object ID for:", dappName || dappId);
@@ -38,7 +44,7 @@ export const useSubmitReview = () => {
             const blobId = await uploadToWalrus(commentText);
             console.log("Walrus Blob ID:", blobId);
 
-            // --- STEP 3: Submit to Sui ---
+            // --- STEP 3: Build Transaction ---
             const tx = new Transaction();
 
             tx.moveCall({
@@ -54,33 +60,63 @@ export const useSubmitReview = () => {
                 ],
             });
 
-            signAndExecuteTransaction(
-                { transaction: tx },
-                {
-                    onSuccess: (result) => {
-                        console.log("Review submitted on-chain!", result);
-                        setIsUploading(false);
-                        if (onSuccess) onSuccess();
-                    },
-                    onError: (err) => {
-                        console.error("Sui Transaction failed", err);
-                        setIsUploading(false);
+            // --- STEP 4: Build transaction bytes (onlyTransactionKind: true) ---
+            console.log("Building transaction...");
+            tx.setSender(account.address);
+            const transactionKindBytes = await tx.build({
+                client,
+                onlyTransactionKind: true
+            });
 
-                        // Handle specific error codes
-                        if (err.message && err.message.includes("MoveAbort") && err.message.includes("function: 5")) {
-                            if (onError) onError(new Error("You have already reviewed this dApp."));
-                        } else {
-                            if (onError) onError(err);
-                        }
-                    },
-                }
+            // Convert Uint8Array to base64 string
+            const transactionKindBytesBase64 = btoa(
+                String.fromCharCode(...transactionKindBytes)
             );
-        } catch (error) {
+
+            // --- STEP 5: Create sponsored transaction ---
+            console.log("Creating sponsored transaction...");
+            const sponsoredTx = await createSponsoredTransaction(
+                transactionKindBytesBase64,
+                account.address
+            );
+
+            console.log("Sponsored transaction created:", sponsoredTx.digest);
+
+            // --- STEP 6: Sign the sponsored transaction bytes ---
+            console.log("Signing sponsored transaction...");
+            // Convert base64 bytes back to Uint8Array for signing
+            const sponsoredBytes = Uint8Array.from(atob(sponsoredTx.bytes), c => c.charCodeAt(0));
+
+            // Build a transaction from the sponsored bytes for signing
+            const txToSign = Transaction.from(sponsoredBytes);
+            const { signature } = await signTransaction({
+                transaction: txToSign,
+            });
+
+            // --- STEP 7: Execute sponsored transaction ---
+            console.log("Executing sponsored transaction...");
+            const result = await executeSponsoredTransaction(
+                sponsoredTx.digest,
+                signature
+            );
+
+            console.log("✅ Gasless review submitted!", result.digest);
+            setIsUploading(false);
+            if (onSuccess) onSuccess();
+
+        } catch (error: any) {
             console.error("Process failed:", error);
             setIsUploading(false);
-            if (onError) onError(error);
+
+            // Handle specific error codes
+            if (error.message && error.message.includes("MoveAbort") && error.message.includes("function: 5")) {
+                if (onError) onError(new Error("You have already reviewed this dApp."));
+            } else {
+                if (onError) onError(error);
+            }
         }
     };
 
     return { submitReview, isUploading };
 };
+
