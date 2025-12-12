@@ -67,7 +67,15 @@ export async function fetchFromWalrus(blobId: string): Promise<string | null> {
         const aggregatorUrl = getWalrusUrl(blobId, i);
         try {
             console.log(`Attempting fetch from: ${aggregatorUrl}`);
-            const response = await fetch(aggregatorUrl);
+
+            // Add 10s timeout to prevent hanging indefinitely
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+            const response = await fetch(aggregatorUrl, {
+                signal: controller.signal
+            });
+            clearTimeout(timeoutId);
 
             if (!response.ok) {
                 throw new Error(`${response.status} ${response.statusText}`);

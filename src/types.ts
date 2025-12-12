@@ -130,3 +130,41 @@ export type SortOption =
     | 'new';
 
 export type TimeFilter = '24h' | '7d' | '30d' | 'all';
+
+export interface NewsArticle {
+    id: string;
+    blob_id: string;
+    title: string;
+    category: string;
+    source: 'twitter' | 'rss' | 'onchain';
+    timestamp: number;
+
+    // Full content (fetched from Walrus)
+    content?: string;
+    summary?: string;
+    url?: string;
+    image?: string;
+    author?: string;
+
+    // Engagement
+    totalTips: number;
+    tipCount: number;
+    commentCount: number;
+}
+
+export interface WalrusArticleContent {
+    title: string;
+    content: string;
+    summary?: string;
+    source: string;
+    url?: string;
+    image?: string;
+    author?: string;
+    timestamp: number;
+}
+
+export interface ArticleEngagement {
+    totalTips: number;
+    tipCount: number;
+    commentCount: number;
+}

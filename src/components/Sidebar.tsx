@@ -191,20 +191,22 @@ export default function Sidebar({ selectedCategory = 'all', onCategoryChange, is
                             </h3>
                         )}
                         <div className="space-y-1">
-                            <button
+                            <Link
+                                to="/updates"
                                 className={`w-full flex items-center ${isCollapsed ? 'justify-center px-2' : 'space-x-3 px-4'} py-2 border-2 border-transparent rounded-none text-sm font-bold text-gray-500 hover:bg-white hover:border-neo-black hover:shadow-neo-sm hover:text-neo-black transition-all uppercase`}
-                                title={isCollapsed ? "Quests" : undefined}
+                                title={isCollapsed ? "Updates" : undefined}
                             >
                                 <Vote className="w-5 h-5 flex-shrink-0" />
-                                {!isCollapsed && <span>Quests</span>}
-                            </button>
-                            <button
+                                {!isCollapsed && <span>Updates</span>}
+                            </Link>
+                            <Link
+                                to="/airdrops"
                                 className={`w-full flex items-center ${isCollapsed ? 'justify-center px-2' : 'space-x-3 px-4'} py-2 border-2 border-transparent rounded-none text-sm font-bold text-gray-500 hover:bg-white hover:border-neo-black hover:shadow-neo-sm hover:text-neo-black transition-all uppercase`}
                                 title={isCollapsed ? "Airdrops" : undefined}
                             >
                                 <Coins className="w-5 h-5 flex-shrink-0" />
                                 {!isCollapsed && <span>Airdrops</span>}
-                            </button>
+                            </Link>
                         </div>
                     </div>
                 </div>
