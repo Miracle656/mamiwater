@@ -2,7 +2,7 @@
 
 **The Premier dApp Discovery Platform on Sui**
 
-ATLANTIS is a decentralized application (dApp) discovery platform built on the Sui blockchain. It provides a curated, community-driven directory of the best dApps in the Sui ecosystem, featuring a distinct Neo-Brutalist design aesthetic.
+ATLANTIS is a decentralized application (dApp) discovery platform built on the Sui blockchain. It provides a curated, community-driven directory of the best dApps in the Sui ecosystem, featuring a distinct Neo-Brutalist design aesthetic. https://atlantisonsui.wal.app/
 
 ![ATLANTIS Banner](src/assets/Group%2027.png)
 
