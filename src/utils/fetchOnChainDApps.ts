@@ -32,7 +32,7 @@ export async function fetchOnChainDApps(client: SuiClient): Promise<OnChainDAppD
             query: {
                 MoveEventType: `${PACKAGE_ID}::${MODULE_NAME}::DAppRegistered`
             },
-            limit: 50,
+            limit: 200, // Increased from default 50 to fetch all dApps
             order: "descending"
         });
 

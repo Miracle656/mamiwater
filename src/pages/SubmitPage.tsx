@@ -333,6 +333,23 @@ export default function SubmitPage() {
                                     ))}
                                 </select>
                             </div>
+
+                            <div>
+                                <label className="block text-sm font-bold uppercase mb-2">
+                                    Package ID (Optional)
+                                </label>
+                                <input
+                                    type="text"
+                                    name="packageId"
+                                    value={formData.packageId}
+                                    onChange={handleChange}
+                                    className="w-full px-4 py-3 bg-neo-white border-2 border-neo-black text-neo-black focus:outline-none focus:shadow-neo transition-all font-medium placeholder-gray-500"
+                                    placeholder="0x..."
+                                />
+                                <p className="text-sm text-gray-600 mt-2">
+                                    📦 Enter your dApp's package ID to fetch real blockchain metrics and match with existing data
+                                </p>
+                            </div>
                         </div>
                     </div>
 

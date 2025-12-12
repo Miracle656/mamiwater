@@ -27,7 +27,8 @@ import {
     Scale,
     TestTube,
     CreditCard,
-    TrendingUp
+    TrendingUp,
+    User
 } from 'lucide-react';
 
 const categoryIcons: Record<Category, React.ReactNode> = {
@@ -113,7 +114,15 @@ export default function Sidebar({ selectedCategory = 'all', onCategoryChange, is
                     {/* Explore Web3 */}
                     <div>
                         <button
-                            onClick={() => onCategoryChange?.('all')}
+                            onClick={() => {
+                                onCategoryChange?.('all');
+                                const element = document.getElementById('trending-dapps');
+                                if (element) {
+                                    element.scrollIntoView({ behavior: 'smooth' });
+                                } else {
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }
+                            }}
                             className={`w-full flex items-center ${isCollapsed ? 'justify-center px-2' : 'space-x-3 px-4'} py-3 border-2 transition-all mb-2 uppercase font-bold ${selectedCategory === 'all'
                                 ? 'bg-neo-pink text-neo-black border-neo-black shadow-neo-sm'
                                 : 'bg-white text-gray-500 border-transparent hover:border-neo-black hover:shadow-neo-sm hover:text-neo-black'
@@ -132,6 +141,10 @@ export default function Sidebar({ selectedCategory = 'all', onCategoryChange, is
                                 <Link to="/submit" className="block px-4 py-2 text-sm font-bold text-gray-500 hover:text-neo-black hover:bg-neo-green border-2 border-transparent hover:border-neo-black transition-all uppercase">
                                     Submit dApp
                                 </Link>
+                                <Link to="/profile" className="block px-4 py-2 text-sm font-bold text-gray-500 hover:text-neo-black hover:bg-neo-pink border-2 border-transparent hover:border-neo-black transition-all uppercase flex items-center gap-2">
+                                    <User className="w-4 h-4" />
+                                    Profile
+                                </Link>
                             </div>
                         )}
                     </div>
@@ -148,7 +161,15 @@ export default function Sidebar({ selectedCategory = 'all', onCategoryChange, is
                             {categories.map((category) => (
                                 <button
                                     key={category}
-                                    onClick={() => onCategoryChange?.(category)}
+                                    onClick={() => {
+                                        onCategoryChange?.(category);
+                                        const element = document.getElementById('trending-dapps');
+                                        if (element) {
+                                            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                        } else {
+                                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                                        }
+                                    }}
                                     className={`w-full flex items-center ${isCollapsed ? 'justify-center px-2' : 'space-x-3 px-4'} py-2 border-2 transition-all text-sm font-bold uppercase ${selectedCategory === category
                                         ? 'bg-neo-cyan text-neo-black border-neo-black shadow-neo-sm'
                                         : 'bg-transparent text-gray-500 border-transparent hover:bg-white hover:border-neo-black hover:shadow-neo-sm hover:text-neo-black'

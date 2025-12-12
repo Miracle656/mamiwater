@@ -101,3 +101,30 @@ export async function checkBackendHealth(): Promise<boolean> {
         return false;
     }
 }
+
+/**
+ * Verify user interaction with a dApp using the backend indexer
+ */
+export async function verifyUser(
+    userAddress: string,
+    dappId: string,
+    packageId: string
+): Promise<{ verified: boolean; txDigest?: string, message?: string }> {
+    try {
+        const response = await fetch(`${BACKEND_API_URL}/api/verify-user`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userAddress, dappId, packageId }),
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Failed to verify user');
+        }
+
+        return await response.json();
+    } catch (error: any) {
+        console.error('Verification failed:', error);
+        return { verified: false, message: error.message };
+    }
+}

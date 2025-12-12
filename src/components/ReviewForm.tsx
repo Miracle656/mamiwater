@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Star, Send, Loader2, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { useSubmitReview } from '../hooks/useSubmitReview';
 import { useCurrentAccount, useSuiClient } from '@mysten/dapp-kit';
@@ -19,6 +19,7 @@ export default function ReviewForm({ dappId, dappName, packageId, onReviewSubmit
     // Interaction check state
     const [hasInteracted, setHasInteracted] = useState<boolean | null>(null);
     const [isCheckingInteraction, setIsCheckingInteraction] = useState(false);
+    const verificationAttempted = useRef<string | null>(null);
 
     const account = useCurrentAccount();
     const client = useSuiClient();
@@ -55,6 +56,28 @@ export default function ReviewForm({ dappId, dappName, packageId, onReviewSubmit
                 });
 
                 setHasInteracted(interacted);
+
+                // --- NEW: If interacted, call backend to verify on-chain ---
+                if (interacted) {
+                    if (verificationAttempted.current === packageId) {
+                        return; // Already attempted for this package
+                    }
+                    verificationAttempted.current = packageId;
+
+                    console.log("Interaction detected! Requesting backend verification...");
+                    // We don't await this to keep UI responsive, it happens in background
+                    import('../services/api').then(({ verifyUser }) => {
+                        verifyUser(account.address, dappId, packageId)
+                            .then((res: any) => {
+                                console.log("Verification result:", res);
+                                if (res.verified) {
+                                    // Could trigger a refetch or toast here if needed
+                                    console.log("User successfully verified on-chain!");
+                                }
+                            })
+                            .catch((err: any) => console.error("Verification call failed:", err));
+                    });
+                }
             } catch (error) {
                 console.error("Failed to check interactions:", error);
                 setHasInteracted(null);

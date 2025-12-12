@@ -25,6 +25,9 @@ import { useReviews } from '../hooks/useReviews';
 import { useComments } from '../hooks/useComments';
 import { useSubmitComment } from '../hooks/useSubmitComment';
 import { useOnChainDApp } from '../hooks/useOnChainDApp';
+import { useFetchFromWalrus } from '../hooks/useFetchFromWalrus';
+import { extractBlobId } from '../utils/extractBlobId';
+import { WALRUS_AGGREGATORS } from '../constants';
 
 export default function DAppDetailPage() {
     const { id } = useParams<{ id: string }>();
@@ -33,8 +36,44 @@ export default function DAppDetailPage() {
     // Find the dApp from the fetched list
     const dapp = dapps?.find(d => d.id === id);
 
-    // Fetch on-chain dApp details (Object ID, reviews table ID)
+    // Fetch on-chain dApp details (Object ID, reviews table ID, and ALL editable fields)
     const { data: onChainDApp } = useOnChainDApp(dapp?.packageId || '', dapp?.name);
+
+    // Extract blob IDs from URLs
+    const descriptionBlobId = onChainDApp?.descriptionBlobId;
+    const bannerBlobId = extractBlobId(onChainDApp?.bannerUrl);
+
+    // Fetch description from Walrus if we have a blob ID
+    const { data: walrusDescription } = useFetchFromWalrus(descriptionBlobId);
+
+    // Construct banner URL using first aggregator + blob ID if available, otherwise fallback
+    const bannerUrl = bannerBlobId ? `${WALRUS_AGGREGATORS[0]}/${bannerBlobId}` : onChainDApp?.bannerUrl;
+
+    // Merge dApp data: Use on-chain data for editable fields if available, otherwise use Blockberry data
+    const displayDApp = dapp && onChainDApp ? {
+        ...dapp,
+        // Override with on-chain data for editable fields
+        name: onChainDApp.name,
+        tagline: onChainDApp.tagline,
+        // Use Walrus description if available, otherwise fall back to Blockberry
+        description: walrusDescription || dapp.description,
+        iconUrl: onChainDApp.iconUrl,
+        bannerUrl: bannerUrl || '',
+        category: onChainDApp.category as any,
+        website: onChainDApp.website,
+        twitter: onChainDApp.twitter,
+        discord: onChainDApp.discord,
+        github: onChainDApp.github,
+        features: onChainDApp.features,
+        rating: onChainDApp.rating,
+        reviewCount: onChainDApp.reviewCount,
+    } : dapp;
+
+    // Debug logging
+    console.log('🔍 displayDApp:', displayDApp);
+    console.log('🔍 Twitter:', displayDApp?.twitter);
+    console.log('🔍 Discord:', displayDApp?.discord);
+    console.log('🔍 GitHub:', displayDApp?.github);
 
     // Fetch reviews and comments from blockchain using the correct on-chain IDs
     const { data: fetchedReviews } = useReviews(onChainDApp?.id || '', onChainDApp?.reviewsTableId || '');
@@ -82,14 +121,14 @@ export default function DAppDetailPage() {
 
 
     const handleAddComment = (content: string, parentId?: string): Promise<void> => {
-        if (!dapp) return Promise.reject("DApp not found");
+        if (!displayDApp) return Promise.reject("DApp not found");
 
         return new Promise((resolve, reject) => {
             // Submit to blockchain with Walrus upload
             submitComment(
-                dapp.id,
+                displayDApp.id,
                 content,
-                dapp.name, // Pass dApp name for lookup
+                displayDApp.name, // Pass dApp name for lookup
                 parentId,
                 () => {
                     console.log("Comment submitted successfully!");
@@ -139,8 +178,8 @@ export default function DAppDetailPage() {
 
     const handleOpenApp = (e: React.MouseEvent) => {
         e.preventDefault();
-        if (dapp) {
-            openMiniApp(dapp);
+        if (displayDApp) {
+            openMiniApp(displayDApp);
         }
     };
 
@@ -162,7 +201,7 @@ export default function DAppDetailPage() {
         );
     }
 
-    if (!dapp) {
+    if (!displayDApp) {
         return (
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div className="text-center py-12 neo-box bg-white">
@@ -176,7 +215,7 @@ export default function DAppDetailPage() {
     }
 
     const similarDApps = (dapps || [])
-        .filter(d => d.category === dapp.category && d.id !== dapp.id)
+        .filter(d => d.category === displayDApp.category && d.id !== displayDApp.id)
         .slice(0, 3);
 
     return (
@@ -194,14 +233,14 @@ export default function DAppDetailPage() {
             <div className="neo-box bg-white mb-6 sm:mb-8 overflow-hidden">
                 {/* Banner */}
                 <div className="relative h-40 sm:h-48 md:h-64 bg-neo-black border-b-2 sm:border-b-3 border-neo-black">
-                    {dapp.bannerUrl && (
+                    {displayDApp.bannerUrl && (
                         <img
-                            src={dapp.bannerUrl}
-                            alt={dapp.name}
+                            src={displayDApp.bannerUrl}
+                            alt={displayDApp.name}
                             className="w-full h-full object-cover opacity-60 grayscale hover:grayscale-0 transition-all duration-500"
                         />
                     )}
-                    {dapp.isNew && (
+                    {displayDApp.isNew && (
                         <div className="absolute top-4 right-4 px-4 py-2 bg-neo-green border-2 border-neo-black shadow-neo-sm text-sm font-black uppercase flex items-center space-x-2">
                             <Sparkles className="w-4 h-4" />
                             <span>NEW</span>
@@ -213,8 +252,8 @@ export default function DAppDetailPage() {
                 <div className="p-4 sm:p-6 md:p-8">
                     <div className="flex flex-col md:flex-row items-start gap-4 sm:gap-6">
                         <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-neo-white border-2 sm:border-3 border-neo-black shadow-neo flex items-center justify-center text-3xl sm:text-4xl md:text-5xl flex-shrink-0 -mt-8 sm:-mt-12 md:-mt-16 relative z-10 overflow-hidden">
-                            {dapp.iconUrl ? (
-                                <img src={dapp.iconUrl} alt={dapp.name} className="w-full h-full object-cover" />
+                            {displayDApp.iconUrl ? (
+                                <img src={displayDApp.iconUrl} alt={displayDApp.name} className="w-full h-full object-cover" />
                             ) : (
                                 <span>💧</span>
                             )}
@@ -223,16 +262,16 @@ export default function DAppDetailPage() {
                         <div className="flex-1 w-full">
                             <div className="flex flex-col lg:flex-row items-start justify-between mb-4 gap-4">
                                 <div className="w-full lg:flex-1">
-                                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-black uppercase mb-2 tracking-tighter break-words">{dapp.name}</h1>
-                                    <p className="text-base sm:text-lg md:text-xl font-medium text-gray-600 mb-4 border-l-2 sm:border-l-4 border-neo-yellow pl-3 sm:pl-4">{dapp.tagline}</p>
+                                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-black uppercase mb-2 tracking-tighter break-words">{displayDApp.name}</h1>
+                                    <p className="text-base sm:text-lg md:text-xl font-medium text-gray-600 mb-4 border-l-2 sm:border-l-4 border-neo-yellow pl-3 sm:pl-4">{displayDApp.tagline}</p>
                                     <div className="flex items-center space-x-4">
                                         <span className="px-3 py-1 bg-neo-cyan border-2 border-neo-black text-neo-black text-sm font-bold uppercase shadow-neo-sm">
-                                            {dapp.category}
+                                            {displayDApp.category}
                                         </span>
                                         <div className="flex items-center space-x-1 bg-neo-white px-2 py-1 border-2 border-neo-black shadow-neo-sm">
                                             <Star className="w-5 h-5 text-neo-black fill-neo-black" />
-                                            <span className="font-black">{dapp.rating.toFixed(1)}</span>
-                                            <span className="text-gray-500 font-bold text-xs uppercase">({dapp.reviewCount} reviews)</span>
+                                            <span className="font-black">{displayDApp.rating.toFixed(1)}</span>
+                                            <span className="text-gray-500 font-bold text-xs uppercase">({displayDApp.reviewCount} reviews)</span>
                                         </div>
                                     </div>
                                 </div>
@@ -248,9 +287,9 @@ export default function DAppDetailPage() {
 
                             {/* Social Links */}
                             <div className="flex items-center space-x-3">
-                                {dapp.twitter && (
+                                {displayDApp.twitter && (
                                     <a
-                                        href={`https://twitter.com/${dapp.twitter}`}
+                                        href={`https://twitter.com/${displayDApp.twitter}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="p-2 bg-white border-2 border-neo-black hover:bg-neo-blue hover:text-white transition-colors shadow-neo-sm"
@@ -258,9 +297,9 @@ export default function DAppDetailPage() {
                                         <Twitter className="w-5 h-5" />
                                     </a>
                                 )}
-                                {dapp.github && (
+                                {displayDApp.github && (
                                     <a
-                                        href={dapp.github}
+                                        href={displayDApp.github}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="p-2 bg-white border-2 border-neo-black hover:bg-neo-black hover:text-white transition-colors shadow-neo-sm"
@@ -282,7 +321,7 @@ export default function DAppDetailPage() {
                         <span className="hidden sm:inline">Users (24h)</span>
                         <span className="sm:hidden">Users</span>
                     </div>
-                    <div className="text-lg sm:text-2xl md:text-3xl font-black truncate">{formatNumber(dapp.metrics.users24h)}</div>
+                    <div className="text-lg sm:text-2xl md:text-3xl font-black truncate">{formatNumber(displayDApp.metrics.users24h)}</div>
                 </div>
 
                 <div className="neo-box p-6 bg-white hover:bg-neo-green transition-colors">
@@ -290,7 +329,7 @@ export default function DAppDetailPage() {
                         <DollarSign className="w-4 h-4" />
                         <span>Volume (24h)</span>
                     </div>
-                    <div className="text-3xl font-black">{formatCurrency(dapp.metrics.volume24h)}</div>
+                    <div className="text-3xl font-black">{formatCurrency(displayDApp.metrics.volume24h)}</div>
                 </div>
 
                 <div className="neo-box p-6 bg-white hover:bg-neo-cyan transition-colors">
@@ -298,16 +337,16 @@ export default function DAppDetailPage() {
                         <TrendingUp className="w-4 h-4" />
                         <span>Transactions (24h)</span>
                     </div>
-                    <div className="text-3xl font-black">{formatNumber(dapp.metrics.transactions24h)}</div>
+                    <div className="text-3xl font-black">{formatNumber(displayDApp.metrics.transactions24h)}</div>
                 </div>
 
-                {dapp.metrics.tvl && (
+                {displayDApp.metrics.tvl && (
                     <div className="neo-box p-6 bg-white hover:bg-neo-purple hover:text-white transition-colors group">
                         <div className="flex items-center space-x-2 text-gray-500 group-hover:text-white mb-2 font-bold uppercase text-xs">
                             <DollarSign className="w-4 h-4" />
                             <span>TVL</span>
                         </div>
-                        <div className="text-3xl font-black">{formatCurrency(dapp.metrics.tvl)}</div>
+                        <div className="text-3xl font-black">{formatCurrency(displayDApp.metrics.tvl)}</div>
                     </div>
                 )}
             </div>
@@ -316,11 +355,11 @@ export default function DAppDetailPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 mb-6 sm:mb-8">
                 <div className="lg:col-span-2 neo-box p-4 sm:p-6 md:p-8 bg-white">
                     <h2 className="text-2xl font-black uppercase mb-4 border-b-3 border-neo-black pb-2 inline-block">About</h2>
-                    <p className="text-neo-black font-medium mb-8 leading-relaxed">{dapp.description}</p>
+                    <p className="text-neo-black font-medium mb-8 leading-relaxed">{displayDApp.description}</p>
 
                     <h3 className="text-xl font-black uppercase mb-4">Features</h3>
                     <ul className="space-y-3">
-                        {dapp.features.map((feature, index) => (
+                        {displayDApp.features.map((feature, index) => (
                             <li key={index} className="flex items-center space-x-3">
                                 <div className="w-3 h-3 bg-neo-black" />
                                 <span className="text-neo-black font-bold">{feature}</span>
@@ -333,35 +372,35 @@ export default function DAppDetailPage() {
                     <h2 className="text-2xl font-black uppercase mb-6 border-b-3 border-neo-black pb-2">Developer</h2>
                     <div className="flex items-center space-x-4 mb-4">
                         <div className="w-16 h-16 bg-neo-white border-2 border-neo-black flex items-center justify-center text-2xl shadow-neo-sm overflow-hidden">
-                            {dapp.developer.avatar.startsWith('http') ? (
+                            {displayDApp.developer.avatar.startsWith('http') ? (
                                 <img
-                                    src={dapp.developer.avatar}
-                                    alt={dapp.developer.name}
+                                    src={displayDApp.developer.avatar}
+                                    alt={displayDApp.developer.name}
                                     className="w-full h-full object-cover"
                                 />
                             ) : (
-                                dapp.developer.avatar
+                                displayDApp.developer.avatar
                             )}
                         </div>
                         <div>
-                            <div className="font-black text-lg uppercase">{dapp.developer.name}</div>
-                            {dapp.developer.verified && (
+                            <div className="font-black text-lg uppercase">{displayDApp.developer.name}</div>
+                            {displayDApp.developer.verified && (
                                 <div className="text-xs font-bold text-white bg-neo-blue px-2 py-0.5 border border-neo-black inline-block mt-1">
                                     ✓ Verified
                                 </div>
                             )}
                         </div>
                     </div>
-                    <p className="text-sm font-medium text-gray-600 mb-6 border-l-2 border-gray-300 pl-3">{dapp.developer.bio}</p>
+                    <p className="text-sm font-medium text-gray-600 mb-6 border-l-2 border-gray-300 pl-3">{displayDApp.developer.bio}</p>
 
                     <div className="text-sm font-bold text-gray-500 uppercase space-y-2 bg-neo-white p-4 border-2 border-neo-black">
                         <div className="flex justify-between">
                             <span>Launched:</span>
-                            <span className="text-neo-black">{formatRelativeTime(dapp.launchDate)}</span>
+                            <span className="text-neo-black">{formatRelativeTime(displayDApp.launchDate)}</span>
                         </div>
                         <div className="flex justify-between">
                             <span>Rank:</span>
-                            <span className="text-neo-black">#{dapp.rank}</span>
+                            <span className="text-neo-black">#{displayDApp.rank}</span>
                         </div>
                     </div>
                 </div>
@@ -371,11 +410,11 @@ export default function DAppDetailPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8 mb-8 sm:mb-12">
                 <div className="neo-box p-8 bg-white">
                     <ReviewSection
-                        dapp={dapp}
+                        dapp={displayDApp}
                         isRegistered={!!onChainDApp}
                         reviews={reviews}
-                        rating={dapp.rating}
-                        reviewCount={dapp.reviewCount}
+                        rating={displayDApp.rating}
+                        reviewCount={displayDApp.reviewCount}
                         onReviewSubmitted={(review: { rating: number; title: string; content: string; verified: boolean }) => handleAddReview(review)}
                         onRegisterSuccess={() => {
                             // Force refresh or just let the user know

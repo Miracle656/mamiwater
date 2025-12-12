@@ -2,7 +2,7 @@ import { getFullnodeUrl, SuiClient } from '@mysten/sui/client';
 
 // Configuration
 const NETWORK = 'testnet';
-const PACKAGE_ID = '0xdf2c43333ce33e410cad9464ab98522fb699612b040f26e9696cb672e93260fa';
+const PACKAGE_ID = '0xf891668cf36b511419c78b8ae07ee85b6826e6fe7ecbf910558deffbeed75caa';
 
 // Your wallet address (the one that deployed the contract)
 const YOUR_WALLET_ADDRESS = 'YOUR_WALLET_ADDRESS_HERE';

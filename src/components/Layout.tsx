@@ -9,6 +9,7 @@ import logo from '../assets/Group 27.png';
 import suilogo from "../assets/image001.png"
 import walruslogo from "../assets/6864f039b26f4afedada6c10_logo.svg"
 import suinslogo from "../assets/suinslogo.svg"
+import enokilogo from "../assets/enoki.png"
 
 export default function Layout() {
     const [selectedCategory, setSelectedCategory] = useState<Category | 'all'>('all');
@@ -87,6 +88,7 @@ export default function Layout() {
                                             <img className='w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 object-contain' src={suilogo} alt="Sui" />
                                             <img className='w-12 h-6 sm:w-16 sm:h-8 md:w-20 md:h-10 object-contain' src={walruslogo} alt="Walrus" />
                                             <img className='w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 object-contain' src={suinslogo} alt="SuiNS" />
+                                            <img className='w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 object-contain' src={enokilogo} alt="Enoki" />
                                         </span>
                                     </p>
                                 </div>

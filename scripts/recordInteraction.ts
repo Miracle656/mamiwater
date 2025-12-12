@@ -5,8 +5,8 @@ import { fromHEX } from '@mysten/sui/utils';
 
 // Configuration
 const NETWORK = 'testnet';
-const PACKAGE_ID = '0xdf2c43333ce33e410cad9464ab98522fb699612b040f26e9696cb672e93260fa';
-const REGISTRY_ID = '0x08e331a236a3191ff3d26c2ec8288296a40f1d6b5c91ec7b6269619fb27c5050';
+const PACKAGE_ID = '0xf891668cf36b511419c78b8ae07ee85b6826e6fe7ecbf910558deffbeed75caa';
+const REGISTRY_ID = '0xfc8cd1e1a5f94c5663a9e84e4b4863635ee91466d50eaafebf1d96cc9e5fe2f0';
 const MODULE_NAME = 'dapp_registry';
 
 // You need to provide these values:

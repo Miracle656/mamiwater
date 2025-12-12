@@ -104,14 +104,35 @@ export default function DAppCard({ dapp, rank }: DAppCardProps) {
 
                 {/* Footer */}
                 <div className="flex items-center justify-between pt-2 sm:pt-3 border-t-2 sm:border-t-3 border-neo-black">
-                    <div className="flex items-center space-x-2 sm:space-x-4 text-xs sm:text-sm">
-                        <div className="flex items-center space-x-1">
-                            <span className="text-neo-black text-sm sm:text-base">⭐</span>
-                            <span className="font-bold text-neo-black">{dapp.rating.toFixed(1)}</span>
+                    <div className="flex items-center space-x-2 sm:space-x-3 text-xs">
+                        {/* Platform Rating (On-chain reviews) */}
+                        <div className="flex flex-col">
+                            <div className="flex items-center space-x-1">
+                                <span className="text-neo-black text-sm">⭐</span>
+                                <span className="font-bold text-neo-black text-xs sm:text-sm">
+                                    {dapp.rating > 0 ? dapp.rating.toFixed(1) : 'N/A'}
+                                </span>
+                            </div>
+                            <span className="text-[9px] sm:text-[10px] text-gray-500 font-medium">Platform</span>
                         </div>
+
+                        {/* Blockberry Rating (External) */}
+                        {dapp.blockberryRating && (
+                            <div className="flex flex-col">
+                                <div className="flex items-center space-x-1">
+                                    <span className="text-neo-black text-sm">🌐</span>
+                                    <span className="font-bold text-neo-black text-xs sm:text-sm">
+                                        {dapp.blockberryRating.toFixed(1)}
+                                    </span>
+                                </div>
+                                <span className="text-[9px] sm:text-[10px] text-gray-500 font-medium">External</span>
+                            </div>
+                        )}
+
+                        {/* Upvotes */}
                         <div className="flex items-center space-x-1">
-                            <span className="text-neo-black text-sm sm:text-base">🔼</span>
-                            <span className="font-bold text-neo-black">{formatNumber(dapp.upvotes)}</span>
+                            <span className="text-neo-black text-sm">🔼</span>
+                            <span className="font-bold text-neo-black text-xs sm:text-sm">{formatNumber(dapp.upvotes)}</span>
                         </div>
                     </div>
                     <div className={`flex items-center space-x-1 text-xs sm:text-sm font-bold ${dapp.rankChange > 0 ? 'text-green-600' : dapp.rankChange < 0 ? 'text-red-600' : 'text-gray-500'

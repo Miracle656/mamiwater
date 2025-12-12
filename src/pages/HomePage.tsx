@@ -7,6 +7,7 @@ import DAppCard from '../components/DAppCard';
 import TrendingDashboard from '../components/TrendingDashboard';
 import HeroSection from '../components/HeroSection';
 import DisplayName from '../components/DisplayName';
+import { TrendingDiscussions } from '../components/TrendingDiscussions';
 import { TrendingUp, Loader2, Copy, Check } from 'lucide-react';
 import { useCurrentAccount } from '@mysten/dapp-kit';
 import { useDApps } from '../hooks/useDApps';
@@ -127,9 +128,10 @@ export default function HomePage() {
                     </div>
                 </div>
 
-                {/* Right Sidebar (Daily Launches) */}
-                <div className="w-full lg:w-80 flex-shrink-0">
+                {/* Right Sidebar (Daily Launches + Trending Discussions) */}
+                <div className="w-full lg:w-80 flex-shrink-0 space-y-6">
                     <DailyLaunches dapps={displayDApps} />
+                    <TrendingDiscussions />
                 </div>
             </div>
         </div>

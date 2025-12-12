@@ -29,7 +29,8 @@ export interface DApp {
     rankChange: number; // positive = up, negative = down
 
     // Community
-    rating: number; // 0-5
+    rating: number; // 0-5 (Platform rating from on-chain reviews)
+    blockberryRating?: number; // 0-5 (External rating from Blockberry API)
     reviewCount: number;
     upvotes: number;
 

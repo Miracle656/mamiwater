@@ -1,9 +1,15 @@
 export const NETWORK = import.meta.env.VITE_NETWORK || 'testnet';
 
+// Network URL for SuiClient
+export const SUI_NETWORK = NETWORK === 'mainnet'
+    ? 'https://fullnode.mainnet.sui.io:443'
+    : 'https://fullnode.testnet.sui.io:443';
+
 // Deployed Contract IDs
-export const PACKAGE_ID = import.meta.env.VITE_PACKAGE_ID || '0xdf2c43333ce33e410cad9464ab98522fb699612b040f26e9696cb672e93260fa';
-export const REGISTRY_ID = import.meta.env.VITE_REGISTRY_ID || '0x08e331a236a3191ff3d26c2ec8288296a40f1d6b5c91ec7b6269619fb27c5050';
+export const PACKAGE_ID = "0xf891668cf36b511419c78b8ae07ee85b6826e6fe7ecbf910558deffbeed75caa";
+export const REGISTRY_ID = "0xfc8cd1e1a5f94c5663a9e84e4b4863635ee91466d50eaafebf1d96cc9e5fe2f0";
 export const MODULE_NAME = 'dapp_registry';
+export const CLOCK_ID = "0x6";
 
 // Enoki Configuration
 export const ENOKI_API_KEY = import.meta.env.VITE_ENOKI_API_KEY || '';

@@ -45,9 +45,9 @@ export default function ReviewItem({ review }: ReviewItemProps) {
                     </div>
                     <DisplayName name={review.userName} className="font-bold text-neo-black uppercase" />
                     {review.verified && (
-                        <div className="flex items-center space-x-1 bg-neo-green/10 px-2 py-0.5 border-2 border-neo-green rounded-full">
-                            <CheckCircle2 className="w-3 h-3 text-neo-green fill-neo-green" />
-                            <span className="text-[10px] font-black text-neo-green uppercase tracking-wider">Verified User</span>
+                        <div className="flex items-center space-x-1 bg-neo-green px-2 py-0.5 border-2 border-neo-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                            <CheckCircle2 className="w-3 h-3 text-white" />
+                            <span className="text-[10px] font-black text-white uppercase tracking-wider">Verified</span>
                         </div>
                     )}
                 </div>

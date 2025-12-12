@@ -5,8 +5,22 @@ import { REGISTRY_ID } from "../constants";
 
 export interface OnChainDApp {
     id: string;
+    name: string;
+    tagline: string;
+    descriptionBlobId: string;
+    iconUrl: string;
+    bannerUrl: string;
+    category: string;
+    website: string;
+    twitter?: string;
+    discord?: string;
+    github?: string;
+    features: string[];
     reviewsTableId: string;
     commentCount: number;
+    rating: number;
+    reviewCount: number;
+    launchDate: number;
 }
 
 export const useOnChainDApp = (packageId: string, dappName?: string) => {
@@ -71,6 +85,9 @@ export const useOnChainDApp = (packageId: string, dappName?: string) => {
 
             const fields = (dappObject.data.content as any).fields.value.fields;
             console.log("DApp Object Fields:", fields);
+            console.log("🔍 Raw twitter field:", fields.twitter);
+            console.log("🔍 Raw discord field:", fields.discord);
+            console.log("🔍 Raw github field:", fields.github);
 
             // Extract reviews table ID
             const reviewsTableId = fields.reviews?.fields?.id?.id;
@@ -78,8 +95,23 @@ export const useOnChainDApp = (packageId: string, dappName?: string) => {
 
             return {
                 id: dappObjectId,
+                name: fields.name,
+                tagline: fields.tagline,
+                descriptionBlobId: fields.description_blob_id,
+                iconUrl: fields.icon_url,
+                bannerUrl: fields.banner_url,
+                category: fields.category,
+                website: fields.website,
+                // Social fields are stored as plain strings, not Option<String> vectors
+                twitter: fields.twitter || undefined,
+                discord: fields.discord || undefined,
+                github: fields.github || undefined,
+                features: fields.features || [],
                 reviewsTableId: reviewsTableId || "",
-                commentCount: Number(fields.comment_count || 0)
+                commentCount: Number(fields.comment_count || 0),
+                rating: Number(fields.rating) / 100,
+                reviewCount: Number(fields.review_count),
+                launchDate: Number(fields.created_at)
             };
         },
         enabled: !!packageId || !!dappName,
