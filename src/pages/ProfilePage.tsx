@@ -98,7 +98,7 @@ export default function ProfilePage() {
                 {/* Back Button */}
                 <Link
                     to="/"
-                    className="inline-flex items-center gap-2 mb-6 px-4 py-2 bg-white border-2 border-black font-bold hover:bg-gray-100"
+                    className="inline-flex items-center gap-2 mb-6 px-4 py-2 font-bold"
                 >
                     <ArrowLeft className="w-5 h-5" />
                     BACK TO HOME
@@ -241,7 +241,7 @@ export default function ProfilePage() {
                             <p className="text-gray-600 mb-6">You haven't registered any dApps yet</p>
                             <Link
                                 to="/submit"
-                                className="inline-block px-6 py-3 bg-primary text-white font-black border-3 border-black hover:bg-secondary transition-colors"
+                                className="inline-block px-6 py-3 bg-primary text-black font-black border-3 border-black hover:bg-secondary transition-colors"
                             >
                                 REGISTER YOUR FIRST DAPP
                             </Link>
