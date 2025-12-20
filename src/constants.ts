@@ -28,31 +28,36 @@ export const ENOKI_API_KEY = import.meta.env.VITE_ENOKI_API_KEY || 'enoki_public
 export const SPONSOR_ADDRESS = import.meta.env.VITE_SPONSOR_ADDRESS || '0x669fbc7dff33e6af17cd1ce556e39b791c065ffc0ea653363e69363813f6ec58';
 
 // Blockberry API
-export const BLOCKBERRY_API_KEY = import.meta.env.VITE_BLOCKBERRY_API_KEY || 'uEX3gyeTtmpcKDOZPgxctqNpHmsf7Y';
+export const BLOCKBERRY_API_KEY = import.meta.env.VITE_BLOCKBERRY_API_KEY || '';
+
+// Wrapped NFT Contract (Testnet)
+export const WRAPPED_NFT_PACKAGE_ID = "0xca29c04c74038b37ff1a4f83ffd023b7832af366d7860432815aa8f4ea90f185";
+export const WRAPPED_NFT_MODULE = "sui_wrap";
 
 // Admin Configuration
-// The address allowed to perform administrative actions like registering dApps
 export const ADMIN_ADDRESS = import.meta.env.VITE_ADMIN_ADDRESS || '0x669fbc7dff33e6af17cd1ce556e39b791c065ffc0ea653363e69363813f6ec58';
 
-// Walrus Configuration - Multiple endpoints for fallback
+// Walrus Configuration (Testnet) - Multiple endpoints for fallback
 export const WALRUS_PUBLISHERS = [
-    'https://walrus-testnet-publisher.nodes.guru/v1/blobs',
-    'https://walrus-testnet-publisher.stakely.io/v1/blobs',
-    'https://publisher.walrus-testnet.walrus.space/v1/blobs',
-    'https://walrus-testnet-publisher.everstake.one/v1/blobs',
-    'https://walrus-testnet-publisher.chainbase.online/v1/blobs',
-    'https://publisher.testnet.walrus.atalma.io/v1/blobs',
-    'https://walrus-testnet-publisher.natsai.xyz/v1/blobs',
-    'https://walrus-testnet-publisher.nodeinfra.com/v1/blobs',
+    'https://walrus-testnet-publisher.nodes.guru',
+    'https://walrus-testnet-publisher.stakely.io',
+    'https://publisher.walrus-testnet.walrus.space',
+    'https://walrus-testnet-publisher.everstake.one',
+    'https://walrus-testnet-publisher.chainbase.online',
+    'https://publisher.testnet.walrus.atalma.io',
+    'https://walrus-testnet-publisher.natsai.xyz',
+    'https://walrus-testnet-publisher.nodeinfra.com',
 ];
 
 export const WALRUS_AGGREGATORS = [
-    'https://aggregator.walrus-testnet.walrus.space/v1/blobs',
-    'https://aggregator.testnet.walrus.atalma.io/v1/blobs',
-    'https://walrus-testnet-aggregator.nodes.guru/v1/blobs',
-    'https://walrus-testnet-aggregator.stakely.io/v1/blobs',
-    'https://walrus-testnet-aggregator.everstake.one/v1/blobs',
-    'https://walrus-testnet-aggregator.chainbase.online/v1/blobs',
-    'https://walrus-testnet-aggregator.natsai.xyz/v1/blobs',
-    'https://walrus-testnet-aggregator.nodeinfra.com/v1/blobs',
+    'https://walrus-testnet-aggregator.nodes.guru/v1',
+    'https://walrus-testnet-aggregator.stakely.io/v1',
+    'https://aggregator.walrus-testnet.walrus.space/v1',
+    'https://walrus-testnet-aggregator.everstake.one/v1',
+    'https://walrus-testnet-aggregator.chainbase.online/v1',
+    'https://aggregator.testnet.walrus.atalma.io/v1',
+    'https://walrus-testnet-aggregator.natsai.xyz/v1',
+    'https://walrus-testnet-aggregator.nodeinfra.com/v1',
 ];
+
+export const WALRUS_EPOCHS = 5; // Number of epochs to store

@@ -1,4 +1,4 @@
-import { useOutletContext } from 'react-router-dom';
+import { Link, useOutletContext } from 'react-router-dom';
 import type { Category } from '../types';
 
 import FeaturedDApps from '../components/FeaturedDApps';
@@ -53,25 +53,36 @@ export default function HomePage() {
             {/* Welcome Section - Show when connected */}
             {account && (
                 <div className="mb-8 sm:mb-12 py-4 sm:py-6">
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-1">
-                        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-neo-black break-all">
-                            Welcome, <DisplayName name={account.address} className="inline" />
-                        </h1>
-                        <button
-                            onClick={copyAddress}
-                            className="self-start sm:self-auto p-2 border-2 border-neo-black bg-white hover:bg-neo-yellow transition-colors shadow-neo-sm hover:shadow-neo active:shadow-none flex-shrink-0"
-                            title="Copy address"
+                    <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                        <div>
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-1">
+                                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-neo-black break-all">
+                                    Welcome, <DisplayName name={account.address} className="inline" />
+                                </h1>
+                                <button
+                                    onClick={copyAddress}
+                                    className="self-start sm:self-auto p-2 border-2 border-neo-black bg-white hover:bg-neo-yellow transition-colors shadow-neo-sm hover:shadow-neo active:shadow-none flex-shrink-0"
+                                    title="Copy address"
+                                >
+                                    {copied ? (
+                                        <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
+                                    ) : (
+                                        <Copy className="w-4 h-4 sm:w-5 sm:h-5" />
+                                    )}
+                                </button>
+                            </div>
+                            <p className="text-base sm:text-lg font-medium text-gray-600">
+                                Resume your journey
+                            </p>
+                        </div>
+
+                        <Link
+                            to="/wrapped"
+                            className="neo-box bg-neo-pink hover:bg-neo-yellow px-4 sm:px-6 py-3 flex items-center gap-2 transition-all group whitespace-nowrap animate-[ring_2s_ease-in-out_infinite]"
                         >
-                            {copied ? (
-                                <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
-                            ) : (
-                                <Copy className="w-4 h-4 sm:w-5 sm:h-5" />
-                            )}
-                        </button>
+                            <span>🎁 Check Your 2025 Wrapped</span>
+                        </Link>
                     </div>
-                    <p className="text-base sm:text-lg font-medium text-gray-600">
-                        Resume your journey
-                    </p>
                 </div>
             )}
 

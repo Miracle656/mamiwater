@@ -5,6 +5,7 @@ import DAppDetailPage from './pages/DAppDetailPage';
 import RankingsPage from './pages/RankingsPage';
 import SubmitPage from './pages/SubmitPage';
 import AirdropsPage from './pages/AirdropsPage';
+import WrappedPage from './pages/WrappedPage';
 import DiscussionsPage from './pages/DiscussionsPage';
 import ProfilePage from './pages/ProfilePage';
 import UpdatesPage from './pages/UpdatesPage';
@@ -26,6 +27,7 @@ function App() {
           <Route path="discussions" element={<DiscussionsPage />} />
           <Route path="profile" element={<ProfilePage />} />
         </Route>
+        <Route path="/wrapped" element={<WrappedPage />} />
       </Routes>
     </BrowserRouter>
   );
